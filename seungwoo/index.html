@@ -5470,20 +5470,38 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     }
   };
   /* 하루 한 문제씩, 기기에 저장된 순번을 따라 문제가 돌아가며 나온다 (같은 문제가 매일 반복되지 않게) */
+  /* 오늘 낼 문제 — 한 번 고른 문제는 답할 때까지 그대로 (창을 닫았다 열어도 같은 문제) */
   function nextStudyIdx(sub, n) {
     if (!n) return 0;
     var s = state[KID];
     if (!s) return 0;
     if (!s.studySeq || typeof s.studySeq !== 'object') s.studySeq = {};
+    if (!s.studyPend || typeof s.studyPend !== 'object') s.studyPend = {};
+    var p = parseInt(s.studyPend[sub], 10);
+    if (p >= 0 && p < n) return p;
     var i = parseInt(s.studySeq[sub], 10);
     if (!(i >= 0)) {
       /* 처음 시작은 날짜에 따라 달라지게 */
       var d = nowDate();
       i = (d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate() + (String(sub).charCodeAt(0))) % n;
     }
-    s.studySeq[sub] = (i + 1) % n;
+    p = i % n;
+    s.studyPend[sub] = p;
     try { saveKid(KID); } catch (e) {}
-    return i % n;
+    return p;
+  }
+
+  /* 문제를 마쳤을 때 → 다음 문제로 넘긴다 */
+  function markStudyAnswered(sub) {
+    var s = state[KID];
+    if (!s) return;
+    if (!s.studySeq || typeof s.studySeq !== 'object') s.studySeq = {};
+    if (!s.studyPend || typeof s.studyPend !== 'object') return;
+    var p = parseInt(s.studyPend[sub], 10);
+    var bank = (STUDY_Q[KID] || STUDY_Q.eunwoo)[sub] || [];
+    if (p >= 0) s.studySeq[sub] = (p + 1) % Math.max(1, bank.length);
+    delete s.studyPend[sub];
+    try { saveKid(KID); } catch (e) {}
   }
   var studyCurSub = '';
   var studyWarpBusy = false;
@@ -5622,6 +5640,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (t[sub]) return;
     t[sub] = 1;
     saveKid(KID);
+    markStudyAnswered(sub);
     paintStudy();
     var n = studyDoneN(KID);
     celebrate('✅', sj.nm + ' 완료!', n >= 2 ? '변신카드가 곧 도착해요 ✨' : '한 개 더 하면 변신카드! (1/2)');
