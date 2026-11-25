@@ -5264,7 +5264,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     var lat = parseFloat(rec.lat), lon = parseFloat(rec.lon);
     if (!isFinite(lat) || !isFinite(lon)) return false;
     WX_LAT = lat; WX_LON = lon;
-    setWxPlace(rec.name || (src === 'geo' ? '현재 위치' : '광주 월산동'), src);
+    /* 지난 위치(캐시)에 이름이 없으면 엉뚱한 동네 이름을 붙이지 않고 '현재 위치'로 둔다 */
+    setWxPlace(rec.name || ((src === 'geo' || src === 'cache') ? '현재 위치' : WX_DEFAULT.name), src);
     return true;
   }
 
