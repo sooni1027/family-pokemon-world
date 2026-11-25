@@ -1199,6 +1199,7 @@ ul{list-style:none;margin:0;padding:0}
 .dex-cell .ht{font-size:9.5px;font-weight:800;color:#9aa6bd;}
 
 /* ===== ✋ 무대 캐릭터 드래그 (손가락 · 마우스) ===== */
+.stage.measuring .pal,.stage.measuring .figure,.stage.measuring .partner-box{transition:none!important}
 .stage .pal,.stage .figure,.stage .partner-box{touch-action:none;-webkit-user-select:none;user-select:none;
   -webkit-user-drag:none;cursor:grab;transition:transform .18s ease}
 .stage .figure{transform:translate(var(--dx,0px),var(--dy,0px))}
@@ -5852,6 +5853,9 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (!stage) return;
     var sRect = stage.getBoundingClientRect();
     var changed = false;
+    /* 애니메이션 중에 재면 기준 자리가 어긋난다 → 재는 동안만 움직임 효과를 끈다 */
+    var measuring = !stage.classList.contains('measuring');
+    if (measuring) stage.classList.add('measuring');
     DRAG_KEYS.forEach(function (key) {
       var el = $('[data-drag="' + key + '"]', col);
       if (!el) return;
@@ -5881,6 +5885,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       el.style.setProperty('--dx', x + 'px');
       el.style.setProperty('--dy', y + 'px');
     });
+    if (measuring) stage.classList.remove('measuring');
     if (changed) saveKid(id);
     paintStageReset(id);
   }
