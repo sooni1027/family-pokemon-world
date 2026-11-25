@@ -10487,7 +10487,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     var on = !!labIncubating(KID);
     if (art) art.src = on ? LAB_ART.egg : LAB_ART.empty;
     if (t) t.textContent = on ? labRemainText(ms) : '부화 중인 알이 없어요';
-    if (note) note.textContent = !on ? '' : (ms > 0 ? '알이 따뜻하게 익고 있어요' : '부화할 시간이 되었어요!');
+    if (note) note.textContent = !on ? '' : (ms > 0 ? '알이 따뜻하게 익고 있어요' : '껍질을 깨 볼까요?');
     if (badge) badge.textContent = !on ? '🔮 부화장치' : (ms > 0 ? '🔮 부화 중' : '✨ 부화 준비 완료');
   }
 
