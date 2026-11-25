@@ -2948,6 +2948,37 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 .hr-slot.on .hs-nm{color:#0f7a55}
 .hr-slot:active{transform:scale(.97)}
 .hr-none{font-size:11.5px;font-weight:800;color:#95a4b8;padding:14px 4px}
+/* 👕 집 안 패션아이템 목록 */
+.hr-fash-tray{border-top:2px dashed #eee3d0;padding-top:5px}
+.hr-fash-tray .hr-tray-list{min-height:54px;align-items:center}
+.fash-slot{position:relative;flex:0 0 68px;gap:1px;background:#fdf4fb;border-color:#eddcec;padding:2px}
+.fash-slot img{width:38px;height:32px;object-fit:contain;filter:drop-shadow(0 1px 1px rgba(90,40,80,.14))}
+.fash-slot.on{background:#fff0f8;border-color:#ef96c6;box-shadow:0 0 0 2px rgba(239,150,198,.28)}
+.fash-slot.on .hs-nm{color:#c0337e}
+.fash-slot .fash-on{
+  position:absolute;top:-7px;right:-4px;font-size:8.5px;font-weight:900;color:#fff;letter-spacing:-.3px;
+  background:#e8549b;border-radius:999px;padding:2px 6px;box-shadow:0 2px 5px rgba(200,60,130,.3);
+}
+.hr-fash-tray .hr-none{padding:10px 4px;font-size:11px}
+/* 작은 화면(태블릿 768 높이)에서 방 모달이 한 화면에 들어오게 */
+@media (max-height:820px){
+  .modal.house-modal .hr-stage.size-small{width:min(100%,382px,39vh)}
+  .hr-fash-tray .hr-tray-list{min-height:50px}
+}
+/* 넓은 화면: 방 그림은 왼쪽, 보관함·벽지·패션은 오른쪽 두 칸으로 */
+@media (min-width:880px){
+  .modal.house-modal{
+    display:grid;grid-template-columns:minmax(0,1fr) 372px;grid-template-rows:auto auto;
+    column-gap:14px;align-items:start;
+  }
+  .modal.house-modal .modal-head{grid-column:1 / -1}
+  .modal.house-modal .hr-stage{grid-column:1;margin:0 auto}
+  .modal.house-modal .hr-stage.size-small{width:min(100%,470px,58vh)}
+  .modal.house-modal .hr-panel{grid-column:2}
+  .modal.house-modal .hr-tray-list{min-height:62px}
+  /* 패션아이템 6종은 두 줄로 펼쳐 한눈에 보이게 */
+  .modal.house-modal .hr-fash-tray .hr-tray-list{flex-wrap:wrap;overflow-x:visible;gap:5px;min-height:0}
+}
 .hr-swatches{display:flex;flex-direction:column;gap:4px;border-top:2px dashed #eee3d0;padding-top:6px}
 .hr-sw-row{display:flex;align-items:center;gap:6px}
 .hr-sw-lbl{flex:0 0 46px;font-size:10.5px;font-weight:900;color:#6b5334}
@@ -3660,7 +3691,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     <div class="modal-head">
       <div>
         <h3>🏠 <span id="houseWho">은우의 집</span> <span class="hr-sizebadge" id="houseSize">작은 방</span></h3>
-        <p>가구·소품을 끌어다 놓고, 벽지와 바닥을 바꿔 보세요</p>
+        <p>가구·소품을 끌어다 놓고, 벽지·바닥과 산 패션아이템을 바꿔 보세요</p>
       </div>
       <span class="coin-pill" data-house-coins>🪙 0</span>
       <button class="modal-close" data-close aria-label="닫기">✕</button>
@@ -3688,6 +3719,10 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       <div class="hr-tray">
         <div class="hr-tray-head">🧺 내 가구·소품 <span id="houseTrayNote"></span><b id="houseTotal"></b></div>
         <div class="hr-tray-list" id="houseTray"></div>
+      </div>
+      <div class="hr-tray hr-fash-tray">
+        <div class="hr-tray-head">👕 내 패션아이템 <span id="houseFashNote"></span><b id="houseFashTotal"></b></div>
+        <div class="hr-tray-list" id="houseFash"></div>
       </div>
       <div class="hr-swatches" id="houseSwatches">
         <div class="hr-sw-row">
@@ -9818,23 +9853,37 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   var FASHION_SLOTS = { head: '머리', face: '얼굴', neck: '목' };
   var FASHION_SLOT_ORDER = ['neck', 'face', 'head'];   /* 뒤에 그릴수록 위에 온다 */
 
-  /* 무대(2D)·집 안(3D) 그림마다 [가운데 x%, 위 y%, 폭%, 세로 배율] */
+  /* 무대(2D)·집 안(3D) 그림마다 [가운데 x%, 위 y%, 폭%, 세로 배율, 회전°]
+     · 좌표는 각 그림(캐릭터 아트) 기준 % — 은우·승우는 그림이 달라 따로 잡았다
+     · byKid 에 그 아이 값이 있으면 그걸, 없으면 기본(stage/room)을 쓴다 */
   var FASHION = [
     { id: 'cap', name: '트레이너 모자', slot: 'head', price: 2,
-      stage: [50, -4.5, 55, 0.62], room: [52, 0.5, 76, 0.62] },
+      stage: [56.5, -0.4, 46, 0.62, 0], room: [58, 0.2, 43, 0.88, 8],
+      byKid: { seungwoo: { stage: [55, 3.6, 46, 0.62, 0], room: [58, 0.8, 43, 0.88, 10] } } },
     { id: 'crown', name: '황금 왕관', slot: 'head', price: 4,
-      stage: [50, -4, 44, 1], room: [51, -7, 44, 1] },
+      stage: [56.5, -2.4, 34, 1, 0], room: [57, 0, 42, 1, 0],
+      byKid: { seungwoo: { stage: [55, 1.6, 34, 1, 0], room: [57, 1, 40, 1, 3] } } },
     { id: 'ribbon', name: '핑크 리본', slot: 'head', price: 3,
-      stage: [64, 3, 26, 1], room: [63, 4, 32, 1] },
+      stage: [63, 2, 21, 1, 14], room: [66, 7, 26, 1, 16],
+      byKid: { seungwoo: { stage: [64, 5.5, 21, 1, 17], room: [67, 8, 26, 1, 18] } } },
     { id: 'shades', name: '쿨 선글라스', slot: 'face', price: 2,
-      stage: [50, 9.3, 48, 1], room: [52, 25.6, 56, 1] },
+      stage: [56, 10.9, 27, 1, -5], room: [58, 25.4, 44, 1, 12.3],
+      byKid: { seungwoo: { stage: [55, 14.7, 31, 1.3, 0], room: [57.5, 26.9, 44, 1, 10.9] } } },
     { id: 'scarf', name: '하늘 목도리', slot: 'neck', price: 3,
-      stage: [50, 23, 34, 1], room: [51, 39.5, 28, 1] },
+      stage: [57, 21.5, 34, 0.92, 0], room: [56, 42, 36, 0.9, 0],
+      byKid: { seungwoo: { stage: [55, 26.4, 34, 0.92, 0], room: [56, 43, 36, 0.9, 0] } } },
     { id: 'necklace', name: '별 목걸이', slot: 'neck', price: 2,
-      stage: [50, 23, 36, 1], room: [52, 42, 32, 1] }
+      stage: [57, 22, 30, 1, 0], room: [55, 42, 32, 1, 0],
+      byKid: { seungwoo: { stage: [55, 25.4, 30, 1, 0], room: [55, 43, 32, 1, 0] } } }
   ];
   var FASHION_BY_ID = {};
   FASHION.forEach(function (it) { FASHION_BY_ID[it.id] = it; });
+
+  /* 이 아이 그림에서 쓸 좌표 */
+  function fashionGeo(it, form) {
+    var alt = (it.byKid && it.byKid[KID]) ? it.byKid[KID] : null;
+    return (alt && alt[form]) || it[form] || it.stage;
+  }
 
   function fashionArt(it, form) {
     var a = FASHION_ART[it.id] || {};
@@ -9873,11 +9922,14 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       var id = worn[slot];
       var it = id ? FASHION_BY_ID[id] : null;
       if (!it) return;
-      var p = it[form] || it.stage;
+      var p = fashionGeo(it, form);
       var sy = p[3] || 1;
+      var rot = p[4] || 0;
+      var tf = 'translateX(-50%)' + (rot ? ' rotate(' + rot + 'deg)' : '') +
+               (sy !== 1 ? ' scaleY(' + sy + ')' : '');
       out += '<img class="fash-item" src="' + fashionArt(it, form) + '" alt="" draggable="false"' +
         ' data-fashitem="' + it.id + '" style="left:' + p[0] + '%;top:' + p[1] + '%;width:' + p[2] +
-        '%;transform:translateX(-50%) scaleY(' + sy + ')">';
+        '%;transform:' + tf + '">';
     });
     return out;
   }
@@ -9918,6 +9970,39 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     layer.style.transform = (p && p.flip) ? 'scaleX(-1)' : '';
   }
 
+  /* 🏠 집 꾸미기 모달 안의 👕 내 패션아이템 목록 (눌러서 바로 입고 벗기) */
+  function paintHouseFashion() {
+    var box = $('#houseFash');
+    if (!box) return;
+    var s = state[KID];
+    var own = (Array.isArray(s.fashionOwned) ? s.fashionOwned : [])
+      .filter(function (id) { return !!FASHION_BY_ID[id]; });
+    var worn = fashionWorn();
+    var note = $('#houseFashNote'), tot = $('#houseFashTotal');
+    if (note) note.textContent = own.length ? '눌러서 입거나 벗어요' : '';
+    if (tot) tot.textContent = own.length ? (Object.keys(worn).length + '/' + own.length + '개 착용') : '';
+    if (!own.length) {
+      box.innerHTML = '<div class="hr-none">상점에서 패션아이템을 사면 여기서 바로 입혀볼 수 있어요</div>';
+      return;
+    }
+    box.innerHTML = FASHION.filter(function (it) { return own.indexOf(it.id) >= 0; }).map(function (it) {
+      var on = worn[it.slot] === it.id;
+      return '<button type="button" class="hr-slot fash-slot' + (on ? ' on' : '') + '"' +
+          ' data-fatoggle="' + it.id + '" aria-pressed="' + (on ? 'true' : 'false') + '"' +
+          ' aria-label="' + esc(it.name) + (on ? ' 벗기' : ' 입기') + '">' +
+        '<img src="' + fashionArt(it, 'stage') + '" alt="" draggable="false">' +
+        '<span class="hs-nm">' + esc(it.name) + '</span>' +
+        (on ? '<span class="fash-on">착용 중</span>' : '') +
+      '</button>';
+    }).join('');
+  }
+
+  function roomFashionToggle(id) {
+    var it = FASHION_BY_ID[id];
+    if (!it || !fashionOwned(id)) return;
+    fashionApply(id, !fashionWearing(id));
+  }
+
   /* 상점에서 사고 · 갈아입고 · 벗기 */
   function fashionApply(id, on, quiet) {
     var s = state[KID], it = FASHION_BY_ID[id];
@@ -9933,6 +10018,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     paintKid(KID);
     paintNpcCoins();
     paintFashionRoom();
+    paintHouseFashion();
     if (!quiet) toast(on ? it.name + '을(를) 입었어요!' : it.name + '을(를) 벗었어요');
     return true;
   }
@@ -9948,6 +10034,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     paintKid(KID);
     paintNpcCoins();
     paintFashionRoom();
+    paintHouseFashion();
     toast(it.name + '을(를) 샀어요! (' + it.price + '코인) · 바로 입었어요');
     return true;
   }
@@ -9967,7 +10054,16 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
         owned: (state[KID].fashionOwned || []).slice(),
         equipped: fashionWorn(),
         stage: mk('#col-' + KID + ' [data-fash="stage"] img'),
-        room: mk('#houseItems [data-fash="room"] img')
+        room: mk('#houseItems [data-fash="room"] img'),
+        tray: $$('#houseFash [data-fatoggle]').map(function (el) {
+          return { id: el.getAttribute('data-fatoggle'), on: el.classList.contains('on'),
+            name: (el.querySelector('.hs-nm') || el).textContent.replace(/\s+/g, ' ').trim(),
+            badge: (el.querySelector('.fash-on') || {}).textContent || '' };
+        }),
+        trayNote: $('#houseFashNote') ? $('#houseFashNote').textContent : '',
+        trayTotal: $('#houseFashTotal') ? $('#houseFashTotal').textContent : '',
+        trayEmpty: $('#houseFash .hr-none') ? $('#houseFash .hr-none').textContent : '',
+        geo: FASHION.map(function (it) { return { id: it.id, stage: fashionGeo(it, 'stage'), room: fashionGeo(it, 'room') }; })
       };
     },
     enumerable: false
@@ -10187,6 +10283,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     $$('[data-house-coins]').forEach(function (el) { el.textContent = '🪙 ' + state[KID].coins; });
     paintRoomItems();
     paintRoomTray();
+    paintHouseFashion();
     paintHouseSwatches();
   }
 
@@ -10964,6 +11061,14 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       tray.addEventListener('click', function (e) {
         var b = e.target.closest ? e.target.closest('[data-rtoggle]') : null;
         if (b) roomToggle(b.getAttribute('data-rtoggle'));
+      });
+    }
+    var fashTray = $('#houseFash');
+    if (fashTray && !fashTray.getAttribute('data-wired')) {
+      fashTray.setAttribute('data-wired', '1');
+      fashTray.addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('[data-fatoggle]') : null;
+        if (b) roomFashionToggle(b.getAttribute('data-fatoggle'));
       });
     }
     var sw = $('#houseSwatches');
