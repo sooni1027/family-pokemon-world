@@ -2536,8 +2536,30 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 .tray.attention{border-top-color:#b8a4ff;animation:trayPulse 1.4s ease}
 @keyframes trayPulse{0%,100%{background:transparent}30%,70%{background:#f6f2ff}}
 .tray .th{display:flex;align-items:baseline;gap:6px;font-size:12px;font-weight:900;color:#3d4a63}
+.tray .th .th-n{font-size:11px;font-weight:900;color:#1d6ec4;white-space:nowrap}
 .tray .th span{font-size:10.5px;font-weight:800;color:#95a4b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tray .list{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:5px 1px 2px;min-height:78px}
+/* 한 줄 가로 스크롤 — 포켓몬이 100마리를 넘어도 마을 그림을 밀어내지 않는다 */
+.tray .tray-row{display:flex;align-items:stretch;gap:3px;min-width:0}
+.tray .list{
+  flex:1 1 auto;min-width:0;display:flex;flex-wrap:nowrap;gap:6px;
+  overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;overscroll-behavior-x:contain;
+  padding:5px 1px 4px;min-height:78px;
+  scrollbar-width:thin;scrollbar-color:#cfdcea transparent;-webkit-overflow-scrolling:touch;
+}
+.tray .list::-webkit-scrollbar{height:5px}
+.tray .list::-webkit-scrollbar-thumb{background:#cfdcea;border-radius:99px}
+.tray .list::-webkit-scrollbar-track{background:transparent}
+/* ◀ ▶ 수납함 넘기기 */
+.tray .tray-nav{
+  flex:0 0 24px;align-self:stretch;display:flex;align-items:center;justify-content:center;
+  margin:5px 0 4px;padding:0;border:2px solid #e4edf8;border-radius:12px;background:#f7fbff;
+  color:#5a6b82;font-size:10px;line-height:1;font-weight:900;cursor:pointer;
+  touch-action:manipulation;transition:opacity .15s ease,background .15s ease,border-color .15s ease;
+}
+.tray .tray-nav:hover:not(:disabled){background:#eef6ff;border-color:#cfe2f6}
+.tray .tray-nav:active:not(:disabled){transform:scale(.96)}
+.tray .tray-nav:disabled{opacity:.28;cursor:default}
+.tray .tray-nav[hidden]{display:none}
 .v-slot{
   flex:0 0 60px;display:flex;flex-direction:column;align-items:center;gap:0;
   background:#fbfdff;border:2px solid #e9eef7;border-radius:12px;padding:2px 2px 3px;
@@ -3259,8 +3281,12 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
           <div class="v-yard" id="villageYard" data-yard></div>
         </div>
         <div class="tray" id="villageTray">
-          <div class="th">🧺 잡은 포켓몬 <span data-tray-note>끌어다 놓으면 마을에 나타나요</span></div>
-          <div class="list" data-tray></div>
+          <div class="th">🧺 잡은 포켓몬 <b class="th-n" data-tray-count>0마리</b> <span data-tray-note>끌어다 놓으면 마을에 나타나요</span></div>
+          <div class="tray-row">
+            <button type="button" class="tray-nav prev" data-traynav="-1" aria-label="수납함 왼쪽으로 넘기기" aria-disabled="true" hidden>◀</button>
+            <div class="list" data-tray></div>
+            <button type="button" class="tray-nav next" data-traynav="1" aria-label="수납함 오른쪽으로 넘기기" aria-disabled="true" hidden>▶</button>
+          </div>
         </div>
       </section>
     </div>
@@ -9299,7 +9325,6 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 
   var V_SCALE_MIN = 0.6, V_SCALE_MAX = 2.4;
 
-  var vTrayAll = false;
   var vSig = '';
   var vDrag = null;
   var vNoClick = false;
@@ -9308,6 +9333,9 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   var vSel = 0;          /* 크기 버튼을 보여 줄 마을 포켓몬 */
   var vPinch = null;     /* 두 손가락 크기 조절 중 */
   var vPtrs = {};        /* 지금 눌려 있는 손가락(포인터) */
+  var vTraySig = '';     /* 수납함 목록을 다시 그릴 때 보던 자리를 지키려고 */
+  var vNavRaf = 0;
+  var vScrollFx = 0;     /* 수납함 가로 스와이프 관성 */
 
   function normVillage(v) {
     var out = { placed: [] };
@@ -9386,7 +9414,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 
     var sig = caught.length + '|' + (caught.length ? caught[caught.length - 1].id : 0) + '|' +
       v.placed.map(function (p) { return p.id + ':' + p.fx.toFixed(3) + ':' + p.fy.toFixed(3) + ':' + p.scale.toFixed(2); }).join(',') +
-      '|' + s.coins + '|' + (vTrayAll ? 1 : 0) + '|' + vSel + '|' + Math.round(g.r.width) + 'x' + Math.round(g.r.height);
+      '|' + s.coins + '|' + vSel + '|' + Math.round(g.r.width) + 'x' + Math.round(g.r.height);
     if (!force && sig === vSig) return;
     vSig = sig;
 
@@ -9428,6 +9456,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     /* 🧺 수납함 */
     var list = $('[data-tray]', panel);
     var note = $('[data-tray-note]', panel);
+    var cnt = $('[data-tray-count]', panel);
+    if (cnt) cnt.textContent = caught.length + '마리';
     if (note) {
       note.textContent = caught.length
         ? '마을에 ' + v.placed.length + '마리 · 끌어다 놓으면 마을에 나타나요'
@@ -9436,8 +9466,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (list) {
       var on = {};
       v.placed.forEach(function (p) { on[p.id] = true; });
-      var max = vTrayAll ? caught.length : 18;
-      var html = caught.slice(0, max).map(function (c) {
+      var html = caught.map(function (c) {
         var placed = !!on[c.id];
         return '<button type="button" class="v-slot' + (placed ? ' on' : '') + '" data-vpid="' + c.id + '"' +
             ' aria-pressed="' + (placed ? 'true' : 'false') + '"' +
@@ -9447,16 +9476,89 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
           '<span class="snm">' + esc(monName(c.id)) + '</span>' +
         '</button>';
       }).join('');
-      if (!vTrayAll && caught.length > max) {
-        html += '<button type="button" class="v-slot more" data-vmore aria-label="잡은 포켓몬 더 보기">＋' + (caught.length - max) + '</button>';
-      } else if (vTrayAll && caught.length > 18) {
-        html += '<button type="button" class="v-slot more" data-vless aria-label="잡은 포켓몬 접기">접기</button>';
-      }
       if (!caught.length) {
         html = '<div class="v-empty">아직 잡은 포켓몬이 없어요 · 퀘스트를 마치고 포켓몬을 잡아 보세요!</div>';
       }
-      list.innerHTML = html;
+      var tsig = id + '|' + html;
+      if (tsig !== vTraySig) {
+        vTraySig = tsig;
+        var keepLeft = list.scrollLeft;
+        list.innerHTML = html;
+        /* 다시 그려도 보던 자리(가로 스크롤 위치)를 잃지 않게 */
+        if (keepLeft > 0) {
+          var sb = list.style.scrollBehavior;
+          list.style.scrollBehavior = 'auto';
+          list.scrollLeft = keepLeft;
+          list.style.scrollBehavior = sb;
+        }
+      }
     }
+    paintTrayNav();
+  }
+
+  /* ---------- 🧺 수납함 넘기기 (◀ ▶ 버튼 · 가로 스와이프) ---------- */
+  function trayListEl() { return $('[data-tray]'); }
+  function traySlotW(list) {
+    var slot = $('.v-slot', list || document);
+    return (slot && Math.round(slot.getBoundingClientRect().width)) || 60;
+  }
+  /* 지금 보이는 폭에 카드가 3~4개 들어가는 만큼씩 넘긴다 */
+  function trayStep(list) {
+    var per = list.clientWidth >= 520 ? 4 : 3;
+    return Math.max(120, per * (traySlotW(list) + 6));
+  }
+  function paintTrayNav() {
+    var list = trayListEl();
+    if (!list) return;
+    var max = Math.max(0, Math.round(list.scrollWidth - list.clientWidth));
+    var over = max > 4;                 /* 한 화면에 다 들어오면 화살표를 깔끔히 숨긴다 */
+    $$('[data-traynav]').forEach(function (b) {
+      var dir = parseInt(b.getAttribute('data-traynav'), 10) || 0;
+      var off = !over || (dir < 0 ? list.scrollLeft <= 2 : list.scrollLeft >= max - 2);
+      b.hidden = !over;
+      b.disabled = off;
+      b.setAttribute('aria-disabled', off ? 'true' : 'false');
+    });
+  }
+  function trayNavSync() {
+    if (vNavRaf) return;
+    vNavRaf = requestAnimationFrame(function () { vNavRaf = 0; paintTrayNav(); });
+  }
+  function trayNavGo(dir) {
+    var list = trayListEl();
+    if (!list || !dir) return;
+    var max = Math.max(0, list.scrollWidth - list.clientWidth);
+    var to = clamp(list.scrollLeft + dir * trayStep(list), 0, max);
+    try { list.scrollTo({ left: to, behavior: 'smooth' }); }
+    catch (e) { list.scrollLeft = to; }
+    setTimeout(paintTrayNav, 240);
+    setTimeout(paintTrayNav, 520);
+  }
+  /* 손을 뗀 뒤 살짝 미끄러지는 관성 */
+  function trayMomentum(list, v) {
+    if (vScrollFx) cancelAnimationFrame(vScrollFx);
+    var last = 0;
+    list.style.scrollBehavior = 'auto';
+    function step(now) {
+      if (!last) last = now;
+      var dt = Math.min(48, Math.max(1, now - last));
+      last = now;
+      var before = list.scrollLeft;
+      list.scrollLeft = before - v * dt;
+      v *= Math.pow(0.9, dt / 16);
+      if (Math.abs(v) > 0.03 && list.scrollLeft !== before) {
+        vScrollFx = requestAnimationFrame(step);
+      } else {
+        vScrollFx = 0;
+        list.style.scrollBehavior = '';
+        paintTrayNav();
+      }
+    }
+    vScrollFx = requestAnimationFrame(step);
+  }
+  function trayScrollStop(list) {
+    if (vScrollFx) { cancelAnimationFrame(vScrollFx); vScrollFx = 0; }
+    if (list) list.style.scrollBehavior = '';
   }
 
   /* ---------- 배치 · 회수 ---------- */
@@ -9571,6 +9673,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   }
   function vCancelDrag() {
     if (vDrag && vDrag.ghost && vDrag.ghost.parentNode) vDrag.ghost.parentNode.removeChild(vDrag.ghost);
+    if (vDrag && vDrag.list) trayScrollStop(vDrag.list);
     vDrag = null;
     document.removeEventListener('pointermove', onVMove);
     document.removeEventListener('pointerup', onVUp);
@@ -9608,9 +9711,13 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (vDrag) { vCancelDrag(); }
     if (vPinch) return;
     if (e.preventDefault) e.preventDefault();
+    var list = t.closest ? t.closest('[data-tray]') : null;
+    if (list) trayScrollStop(list);
     vDrag = {
       pid: pid, sx: e.clientX, sy: e.clientY, id: e.pointerId,
-      moved: false, fromYard: t.classList.contains('v-mon'), ghost: null
+      lx: e.clientX, lt: Date.now(), vx: 0, axis: '',
+      moved: false, fromYard: t.classList.contains('v-mon'), ghost: null,
+      list: list, scroll0: list ? list.scrollLeft : 0
     };
     document.addEventListener('pointermove', onVMove, { passive: false });
     document.addEventListener('pointerup', onVUp);
@@ -9621,7 +9728,38 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (vDrag.id != null && e.pointerId != null && e.pointerId !== vDrag.id) { vCancelDrag(); return; }
     if (vPinch) { vCancelDrag(); return; }
     var dx = e.clientX - vDrag.sx, dy = e.clientY - vDrag.sy;
-    if (!vDrag.moved && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+    /* 처음 움직이는 방향으로 뜻을 정한다:
+       수납함 안에서 옆으로(가로) → 가로 스크롤 / 위로(세로) → 마을로 끌어다 놓기 */
+    if (!vDrag.axis && (Math.abs(dx) > 7 || Math.abs(dy) > 7)) {
+      var lr = vDrag.list ? vDrag.list.getBoundingClientRect() : null;
+      var inBand = !!lr && e.clientY > lr.top - 16 && e.clientY < lr.bottom + 16;
+      vDrag.axis = (vDrag.list && inBand && Math.abs(dx) > Math.abs(dy) * 1.15) ? 'x' : 'y';
+    }
+    if (vDrag.axis === 'x') {
+      var l = vDrag.list;
+      var lr2 = l ? l.getBoundingClientRect() : null;
+      /* 수납함 위로 확실히 올라오면(마을 쪽으로) 끌어올리기로 바꾼다 */
+      if (lr2 && e.clientY < lr2.top - 40) {
+        vDrag.axis = 'y';
+        vDrag.moved = true;
+        if (l) l.style.scrollBehavior = '';
+        vDrag.ghost = vGhost(vDrag.pid);
+        vMoveGhost(vDrag.ghost, e.clientX, e.clientY);
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (l) {
+        vDrag.list.style.scrollBehavior = 'auto';
+        l.scrollLeft = vDrag.scroll0 - dx;
+        var now = Date.now();
+        vDrag.vx = (e.clientX - vDrag.lx) / Math.max(1, now - vDrag.lt);
+        vDrag.lx = e.clientX; vDrag.lt = now;
+        trayNavSync();
+      }
+      if (e.cancelable) e.preventDefault();
+      return;
+    }
+    if (vDrag.axis === 'y' && !vDrag.moved) {
       vDrag.moved = true;
       var vb = $('[data-vsizebox]');
       if (vb) vb.hidden = true;
@@ -9644,6 +9782,17 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     /* 포인터로 이미 처리했으니 뒤따르는 click 은 무시 */
     vNoClick = true;
     setTimeout(function () { vNoClick = false; }, 70);
+
+    /* 가로 스와이프로 끝났으면 스크롤만 하고 마을에 놓지 않는다 */
+    if (d.axis === 'x') {
+      if (d.list) {
+        d.list.style.scrollBehavior = '';
+        var v = clamp(d.vx || 0, -2.2, 2.2);
+        if (Math.abs(v) > 0.05) trayMomentum(d.list, v);
+        else paintTrayNav();
+      }
+      return;
+    }
 
     var id = KID;
     if (!d.moved) {
@@ -9818,21 +9967,23 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
           else vScaleStep(vSel, (parseInt(sz.getAttribute('data-vsize'), 10) || 0) * 0.2);
           return;
         }
+        var nav = e.target.closest ? e.target.closest('[data-traynav]') : null;
+        if (nav) { trayNavGo(parseInt(nav.getAttribute('data-traynav'), 10) || 0); return; }
         var mon = e.target.closest ? e.target.closest('[data-vpid]') : null;
         if (mon) {
           var pid = parseInt(mon.getAttribute('data-vpid'), 10) || 0;
           if (pid) vTap(pid);
           return;
         }
-        var b = e.target.closest ? e.target.closest('[data-building],[data-vmore],[data-vless]') : null;
+        var b = e.target.closest ? e.target.closest('[data-building]') : null;
         if (!b) return;
         var bd = b.getAttribute('data-building');
         if (bd === 'shop') openNpc();
         else if (bd === 'house') openHouse();
         else if (bd === 'hatch') openHatch();
-        else if (b.hasAttribute('data-vmore')) { vTrayAll = true; paintVillage(KID, true); }
-        else if (b.hasAttribute('data-vless')) { vTrayAll = false; paintVillage(KID, true); }
       });
+      var trayL = trayListEl();
+      if (trayL) trayL.addEventListener('scroll', trayNavSync, { passive: true });
       panel.addEventListener('pointerdown', onVDown);
       var vbox = $('[data-vbox]');
       if (vbox) {
@@ -9849,7 +10000,11 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       document.addEventListener('visibilitychange', function () {
         if (document.hidden) vCancelDrag();
       });
-      window.addEventListener('scroll', function () { if (vDrag) vCancelDrag(); }, true);
+      window.addEventListener('scroll', function (e) {
+        /* 수납함을 옆으로 넘기는 중에는 그 스크롤을 드래그 취소로 보지 않는다 */
+        if (vDrag && vDrag.axis === 'x' && vDrag.list && e.target === vDrag.list) return;
+        if (vDrag) vCancelDrag();
+      }, true);
       if (window.ResizeObserver) {
         var lastW = 0;
         var ro = new ResizeObserver(function () {
@@ -9917,6 +10072,21 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
             w: Math.round(r.width), h: Math.round(r.height), label: b.textContent.replace(/\s+/g, ' ').trim() };
         }),
         caught: (s.caught || []).length, tray: $$('[data-tray] .v-slot').length,
+        trayInfo: (function () {
+          var l = $('[data-tray]'), p = $('[data-traynav="-1"]'), n = $('[data-traynav="1"]'), c = $('[data-tray-count]');
+          if (!l) return null;
+          return {
+            n: l.querySelectorAll('.v-slot').length, left: Math.round(l.scrollLeft),
+            max: Math.max(0, Math.round(l.scrollWidth - l.clientWidth)),
+            cw: Math.round(l.clientWidth), sw: Math.round(l.scrollWidth),
+            h: Math.round(l.getBoundingClientRect().height),
+            prevHidden: !!(p && p.hidden), nextHidden: !!(n && n.hidden),
+            prevOff: !!(p && p.disabled), nextOff: !!(n && n.disabled),
+            slotW: Math.round(traySlotW(l)), step: Math.round(trayStep(l)),
+            count: c ? c.textContent : '',
+            note: (function () { var x = $('[data-tray-note]'); return x ? x.textContent : ''; })()
+          };
+        })(),
         eggs: eggCount(id), hatchers: hatcherCount(id),
         winter: !!KIDART_WINTER, artHead: String(KIDART[id] || '').slice(0, 22),
         labels: labels,
@@ -9933,6 +10103,24 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
         room: roomInfo(),
         modals: $$('.modal-layer.open').map(function (l) { return l.id; })
       };
+    },
+    enumerable: false
+  });
+
+  /* 검증용: 잡은 포켓몬을 한 번에 채워 수납함을 확인한다 */
+  Object.defineProperty(window, '__fpwSeedCaught', {
+    value: function (ids) {
+      var s = state[KID];
+      s.caught = s.caught || [];
+      var have = {};
+      s.caught.forEach(function (c) { have[c.id] = 1; });
+      (ids || []).forEach(function (i) {
+        i = parseInt(i, 10) || 0;
+        if (i && !have[i]) { have[i] = 1; s.caught.push({ id: i, name: '', date: TODAY(), ts: Date.now() }); }
+      });
+      saveKid(KID);
+      paintSideCards(KID);
+      return s.caught.length;
     },
     enumerable: false
   });
