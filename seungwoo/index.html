@@ -6281,7 +6281,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     var q = bank[set[step]];
     if (!sj || !q) return false;
     $('#studyQTitle').textContent = sj.icon + ' ' + sj.nm;
-    $('#studyQSub').textContent = KIDS[KID].name + '에게 꼭 맞는 문제예요';
+    $('#studyQSub').textContent = KIDS[KID].name + '에게 꼭 맞는 문제예요 · 3문제를 다 맞히면 통과!';
     paintStudyStep(sub, step, set.length);
     $('#studyQ').textContent = q.q;
     $('#studyFb').textContent = '';
@@ -6356,8 +6356,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     markStudyAnswered(sub);
     paintStudy();
     var n = studyDoneN(KID);
-    celebrate('✅', sj.nm + ' 완료!', n >= 2 ? '변신카드가 곧 도착해요 ✨' : '한 개 더 하면 변신카드! (1/2)');
-    toast('📖 ' + sj.nm + ' 완료! 오늘 ' + n + '/3');
+    celebrate('✅', sj.nm + ' 완료!', '3문제 모두 맞혔어요! ' + (n >= 2 ? '변신카드가 곧 도착해요 ✨' : '한 개 더 하면 변신카드! (1/2)'));
+    toast('📖 ' + sj.nm + ' 통과! 오늘 ' + n + '/3');
     checkWarpCard();
   }
 
