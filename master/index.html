@@ -3971,13 +3971,14 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 .m-gift-cell .no{position:absolute;left:2px;bottom:1px;font-size:7.5px;font-weight:900;color:#93a7bd}
 .m-gift-cell.on{border-color:#f0a132;background:#fffaf0}
 .m-gift-pick{
-  display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:10px;
+  display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:10px;flex-wrap:wrap;
   background:linear-gradient(120deg,#fff7e2,#fff1f5);border:1.4px solid #f6ddb0;
 }
 .m-gift-pick img{width:38px;height:38px;object-fit:contain}
-.m-gift-pick .gp-copy{flex:1 1 auto;min-width:0;font-size:11px;font-weight:900;color:#8a6420;letter-spacing:-.2px}
+.m-gift-pick .gp-copy{flex:1 1 110px;min-width:0;font-size:11px;font-weight:900;color:#8a6420;letter-spacing:-.2px}
 .m-gift-pick .gp-copy small{display:block;font-size:9px;font-weight:800;color:#b1935c}
 .m-gift-pick .gp-del{border:0;background:#fff;border-radius:7px;padding:2px 6px;font-size:10px;font-weight:900;color:#c06a7a;cursor:pointer}
+.m-gift-pick .m-shiny-toggle{margin-left:auto}
 .m-shiny-toggle{
   padding:4px 9px 5px;border-radius:999px;border:1.5px solid #eadfc0;background:#fffdf5;
   font-size:10px;font-weight:900;color:#9a7a1a;cursor:pointer;white-space:nowrap;
@@ -15510,7 +15511,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
           MB.compose.gift = { id: pid, name: mbMonName(pid, ''), shiny: MB.compose.gift && MB.compose.gift.id === pid ? !!MB.compose.gift.shiny : MB.giftShiny };
           mbPaintGift(); mbPaintSum();
           /* 고른 선물 확인이 화면 밖으로 밀리지 않게 보여 준다 */
-          try { var pk = $('#mbGiftPick'); if (pk && pk.scrollIntoView) pk.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+          try { var pk = $('#mbGiftPick'); if (pk && pk.scrollIntoView) pk.scrollIntoView({ block: 'center' }); } catch (e) {}
           if (mbNoName(MB.compose.gift.name)) {
             mbEnsureKo([pid], function () {
               if (MB.compose.gift && MB.compose.gift.id === pid) MB.compose.gift.name = mbMonName(pid, '');
