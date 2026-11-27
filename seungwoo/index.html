@@ -3783,7 +3783,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 .mr-text{
   position:relative;z-index:2;
   font-family:'GaeguMail','Pretendard',sans-serif;
-  font-size:clamp(14px,1.75vw,22px);line-height:1.42;color:#3c4460;letter-spacing:-.2px;
+  font-size:clamp(15px,1.95vw,24px);line-height:1.42;color:#3c4460;letter-spacing:-.2px;
   white-space:pre-wrap;word-break:break-word;
   max-height:100%;overflow:hidden;
 }
@@ -3989,7 +3989,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   position:absolute;inset:0;z-index:1;width:100%;height:100%;resize:none;
   padding:7% 7.5%;border:0;background:transparent;outline:none;
   font-family:'GaeguMail','Pretendard',sans-serif;
-  font-size:clamp(14px,1.7vw,21px);line-height:1.45;color:#3c4460;letter-spacing:-.2px;
+  font-size:clamp(15px,1.9vw,23px);line-height:1.45;color:#3c4460;letter-spacing:-.2px;
   touch-action:auto;overflow:auto;
 }
 .m-paper-wrap.draw .m-text{pointer-events:none}
@@ -15060,9 +15060,14 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       var st = t.closest('[data-msticker]');
       if (st) {
         var k = st.getAttribute('data-msticker');
-        var list = MB.compose.stkTarget === 'env' ? MB.compose.envStickers : MB.compose.stickers;
-        var n = list.length;
-        list.push({ k: k, x: 32 + (n % 3) * 18, y: 30 + Math.floor(n / 3 % 3) * 18, s: 1, r: 0 });
+        var envT = MB.compose.stkTarget === 'env';
+        var list = envT ? MB.compose.envStickers : MB.compose.stickers;
+        /* 글씨를 가리지 않게 오른쪽·아래쪽부터 차례로 붙는다 */
+        var spots = envT
+          ? [[74, 26], [16, 78], [80, 76], [50, 20], [30, 40], [66, 50]]
+          : [[76, 66], [64, 82], [86, 42], [54, 72], [70, 88], [88, 60]];
+        var spot = spots[list.length % spots.length];
+        list.push({ k: k, x: spot[0], y: spot[1], s: 1, r: 0 });
         mbPaintStickers(); mbPaintPalette(); mbPaintSum();
         return;
       }
