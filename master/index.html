@@ -11897,22 +11897,28 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   var FASHION = [
     { id: 'cap', name: '트레이너 모자', slot: 'head', price: 2,
       stage: [56.5, -0.4, 46, 0.62, 0], room: [58, 0.2, 43, 0.88, 8],
-      byKid: { seungwoo: { stage: [55, 3.6, 46, 0.62, 0], room: [58, 0.8, 43, 0.88, 10] } } },
+      byKid: { seungwoo: { stage: [55, 3.6, 46, 0.62, 0], room: [58, 0.8, 43, 0.88, 10] },
+               master: { stage: [45, 0.8, 43, 0.62, 0], room: [45, 0.8, 43, 0.62, 0] } } },
     { id: 'crown', name: '황금 왕관', slot: 'head', price: 4,
       stage: [56.5, -2.4, 34, 1, 0], room: [57, 0, 42, 1, 0],
-      byKid: { seungwoo: { stage: [55, 1.6, 34, 1, 0], room: [57, 1, 40, 1, 3] } } },
+      byKid: { seungwoo: { stage: [55, 1.6, 34, 1, 0], room: [57, 1, 40, 1, 3] },
+               master: { stage: [45, -0.4, 33, 1, 0], room: [45, -0.4, 33, 1, 0] } } },
     { id: 'ribbon', name: '핑크 리본', slot: 'head', price: 3,
       stage: [63, 2, 21, 1, 14], room: [66, 7, 26, 1, 16],
-      byKid: { seungwoo: { stage: [64, 5.5, 21, 1, 17], room: [67, 8, 26, 1, 18] } } },
+      byKid: { seungwoo: { stage: [64, 5.5, 21, 1, 17], room: [67, 8, 26, 1, 18] },
+               master: { stage: [53, 3, 19, 1, 14], room: [53, 3, 19, 1, 14] } } },
     { id: 'shades', name: '쿨 선글라스', slot: 'face', price: 2,
       stage: [56, 10.9, 27, 1, -5], room: [58, 25.4, 44, 1, 12.3],
-      byKid: { seungwoo: { stage: [55, 14.7, 31, 1.3, 0], room: [57.5, 26.9, 44, 1, 10.9] } } },
+      byKid: { seungwoo: { stage: [55, 14.7, 31, 1.3, 0], room: [57.5, 26.9, 44, 1, 10.9] },
+               master: { stage: [45, 9.2, 24, 1, -3], room: [45, 9.2, 24, 1, -3] } } },
     { id: 'scarf', name: '하늘 목도리', slot: 'neck', price: 3,
       stage: [57, 21.5, 34, 0.92, 0], room: [56, 42, 36, 0.9, 0],
-      byKid: { seungwoo: { stage: [55, 26.4, 34, 0.92, 0], room: [56, 43, 36, 0.9, 0] } } },
+      byKid: { seungwoo: { stage: [55, 26.4, 34, 0.92, 0], room: [56, 43, 36, 0.9, 0] },
+               master: { stage: [45, 16.6, 30, 0.8, 0], room: [45, 16.6, 30, 0.8, 0] } } },
     { id: 'necklace', name: '별 목걸이', slot: 'neck', price: 2,
       stage: [57, 22, 30, 1, 0], room: [55, 42, 32, 1, 0],
-      byKid: { seungwoo: { stage: [55, 25.4, 30, 1, 0], room: [55, 43, 32, 1, 0] } } }
+      byKid: { seungwoo: { stage: [55, 25.4, 30, 1, 0], room: [55, 43, 32, 1, 0] },
+               master: { stage: [45, 18.4, 20, 1, 0], room: [45, 18.4, 20, 1, 0] } } }
   ];
   var FASHION_BY_ID = {};
   FASHION.forEach(function (it) { FASHION_BY_ID[it.id] = it; });
