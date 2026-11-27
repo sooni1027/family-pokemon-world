@@ -3470,6 +3470,57 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 .npc-shop .ns-art.fashion{background:radial-gradient(circle at 50% 46%,#ffffff 0 50%,#eff7ff 51% 100%);border-radius:14px}
 .npc-shop .ns-art.fashion > img{position:static;width:76%;height:76%;padding:0;object-fit:contain}
 
+/* ============================================================
+   🔒 포획 전 엄마 PIN 확인
+   ============================================================ */
+/* 대시보드: 엄마 확인을 기다리는 잡기 버튼 */
+.quests .catch-btn.pinwait{
+  animation:none;background:linear-gradient(135deg,#fff3d2,#ffe3a6);color:#8a5a00;
+  border:2px solid #f1cd74;box-shadow:0 4px 0 rgba(206,163,40,.28);
+  display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.24;
+  font-size:14px;font-weight:900;letter-spacing:-.3px;
+}
+.quests .catch-btn.pinwait .cb-sub{font-size:11.5px;font-weight:900;color:#a2760f;letter-spacing:0}
+.q-foot .q-note.pin{color:#a2760f}
+
+/* ⚙️ 선물함 안의 스위치 */
+#pinGuardSec .pg-switch{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:#fffdf6;border:2px solid #f0e6cf;border-radius:15px;padding:10px 13px;
+  cursor:pointer;text-align:left;transition:background .16s ease,border-color .16s ease;
+}
+#pinGuardSec .pg-switch.on{background:#fff6e2;border-color:#f0cf7a}
+#pinGuardSec .pg-txt{display:flex;flex-direction:column;gap:3px;min-width:0}
+#pinGuardSec .pg-txt b{font-size:13.5px;font-weight:900;color:#3c4a63;letter-spacing:-.3px}
+#pinGuardSec .pg-state{font-style:normal;font-size:11.5px;font-weight:900;color:#93a0b4}
+#pinGuardSec .pg-switch.on .pg-state{color:#c08a12}
+#pinGuardSec .pg-track{
+  flex:0 0 auto;position:relative;width:52px;height:30px;border-radius:999px;
+  background:#dfe6f1;box-shadow:inset 0 1px 3px rgba(70,90,130,.18);transition:background .18s ease;
+}
+#pinGuardSec .pg-knob{
+  position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 5px rgba(60,80,120,.28);transition:left .18s ease;
+}
+#pinGuardSec .pg-switch.on .pg-track{background:linear-gradient(135deg,#ffc94d,#f0a52a)}
+#pinGuardSec .pg-switch.on .pg-knob{left:25px}
+
+/* ⚡ 포켓몬 탭의 잡기 진입부 */
+.catch-gate{flex:0 0 auto;margin-top:7px}
+.cg-card{
+  display:flex;flex-direction:column;align-items:stretch;gap:3px;
+  border-radius:14px;padding:8px 10px;border:2px solid #eaeef7;background:#f8fbff;
+}
+.cg-card.pinwait{background:#fff8e6;border-color:#f1d68f}
+.cg-card.ready{background:#fff5f3;border-color:#f8cdc4}
+.cg-card.lock{background:#f4f6fa;border-color:#e3e8f0}
+.cg-title{font-size:12.5px;font-weight:900;color:#3c4a63;letter-spacing:-.3px;line-height:1.25;
+  word-break:keep-all}
+.cg-sub{font-size:10.5px;font-weight:800;color:#8190a6;letter-spacing:-.2px;line-height:1.3;word-break:keep-all}
+.cg-card.pinwait .cg-title{color:#8a5a00}
+.cg-card.pinwait .cg-sub{color:#a2760f}
+.cg-btn{width:100%;justify-content:center;margin-top:3px;font-size:12px;padding:7px 8px;border-radius:11px}
+
 /* ==========================================================================
    💌 가족 우편함 (마을 우체통 → 전체 화면 편지함)
    · 받은 편지 / 보낸 편지 / 편지 쓰기
@@ -4490,8 +4541,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   <div class="modal" style="max-width:380px">
     <div class="modal-head">
       <div>
-        <h3>🔒 엄마 선물 전용함</h3>
-        <p>4자리 PIN을 입력해 주세요</p>
+        <h3 id="pinTitle">🔒 엄마 선물 전용함</h3>
+        <p id="pinSub">4자리 PIN을 입력해 주세요</p>
       </div>
       <button class="modal-close" data-close>✕</button>
     </div>
@@ -4552,6 +4603,18 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       <h4>💵 주간 직업 도장 · 용돈 1,000원</h4>
       <div class="allow-row" id="allowRow"></div>
       <p class="hint" id="allowHint">일~토 한 주에 직업 미션을 5일 이상 도장 찍으면 용돈 1,000원이에요. 몬스터볼을 누르면 지난 날 기록도 직접 찍거나 뺄 수 있어요(오늘 도장은 아이 화면의 '오늘 완료'와 함께 바뀌고, 코인은 따로 오가지 않아요). 지급 완료를 누르면 이번 주는 지급완료로 표시되고, 다음 주가 되면 새로 시작해요.</p>
+    </div>
+
+    <div class="modal-section" id="pinGuardSec">
+      <h4>🔒 포획 전 엄마 PIN 확인</h4>
+      <button type="button" class="pg-switch" id="pinGuardSwitch" role="switch" aria-checked="false" aria-label="포획 전 엄마 PIN 확인">
+        <span class="pg-txt">
+          <b>🔒 포획 전 엄마 PIN 확인</b>
+          <i class="pg-state" data-pinguard-state>꺼짐</i>
+        </span>
+        <span class="pg-track" aria-hidden="true"><i class="pg-knob"></i></span>
+      </button>
+      <p class="hint" id="pinGuardHint">켜면 퀘스트 4개를 다 해도 바로 잡지 못하고 <b>⏳ 엄마 확인 기다리는 중</b>이 돼요. 아이가 <b>🔑 엄마 확인하기</b>를 누르면 이 PIN 창이 열리고, 맞는 PIN을 넣으면 그때 포획이 열려요. 8시 30분·20시 50분 시간 보너스도 <b>엄마가 확인해 준 시각</b>으로 정해져요.</p>
     </div>
 
     <div class="modal-section">
@@ -5632,6 +5695,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       pos: { pal: { x: 0, y: 0 }, kid: { x: 0, y: 0 }, partner: { x: 0, y: 0 } },
       jobDays: {},
       allowWeek: '',
+      /* 🔒 포획 전 엄마 PIN 확인 (승우 기본 ON · 은우 기본 OFF) */
+      pinGuard: true,
       /* 🥚 포켓몬 알(일반·특별한 알) · 🔮 부화장치(기본·일반·특별) · 부화 슬롯(최대 2개) */
       eggs: 0,
       eggsSpecial: 0,
@@ -5722,6 +5787,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       if (!merged.jobDays[merged.jobDate]) { merged.jobDays[merged.jobDate] = 1; jobBackfill.push(id); }
     }
     merged.allowWeek = (typeof s.allowWeek === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.allowWeek)) ? s.allowWeek : '';
+    /* 🔒 포획 전 엄마 PIN 확인 — 저장된 값이 없으면 기본값(승우 ON · 은우 OFF) */
+    merged.pinGuard = (s.pinGuard === undefined || s.pinGuard === null) ? !!d.pinGuard : !!s.pinGuard;
     return merged;
   }
 
@@ -6322,6 +6389,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
           '<button class="btn soft sm" data-act="partner">🤝 파트너</button>' +
           '<button class="btn village-go" data-act="village">🏘️ 마을 배치하기</button>' +
         '</div>' +
+        '<div class="catch-gate" data-catchgate="' + id + '" hidden></div>' +
       '</div>';
 
     col.addEventListener('click', function (e) {
@@ -6339,6 +6407,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       else if (act === 'hatch') openHatch();
       else if (act === 'hatchcheck') openHatchCheck(eggReadyIndex(id));
       else if (act === 'village') focusTray();
+      else if (act === 'catch') openCatch(id);
+      else if (act === 'pinok') askPinForCatch(id, viewPeriod() === 'morning' ? 'am' : 'pm');
     });
     bindStageDrag(id, col);
   }
@@ -6376,6 +6446,10 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     card.qids.forEach(function (q) { bucket[q] = !allDone; });
     saveKid(id);
     paintKid(id);
+    /* 🔒 포획 전 엄마 PIN 확인: 4개를 다 채우면 바로 잡지 않고 엄마 확인을 기다린다 */
+    if (!allDone && pinWaiting(id, isMorning ? 'am' : 'pm')) {
+      toast(PIN_WAIT_MSG + ' 엄마가 확인해 주면 포켓몬을 잡을 수 있어요');
+    }
   }
 
   /* 🔴 몬스터볼 안내: 지금 시간대(오전/오후 미리보기 포함)에 맞는 안내만 보여 준다 */
@@ -6503,6 +6577,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     /* 시간대가 끝나면 몬스터볼을 주고 바로 잡을 수 있게 (하루에 한 번) */
     syncCatchDay(id);
     var locked = catchLocked(id);
+    var pw = pinWaiting(id, period);
     var ci = catchInfo(id, period);
 
     if (bh) {
@@ -6541,6 +6616,12 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
         cbtn.disabled = false;
         cbtn.hidden = false;
         cbtn.textContent = catchLockLabel();
+      } else if (pw) {
+        /* 🔒 엄마 확인을 기다리는 중 — 이 버튼을 누르면 엄마 PIN 확인창 */
+        cbtn.className = 'catch-btn pinwait';
+        cbtn.disabled = false;
+        cbtn.hidden = false;
+        cbtn.innerHTML = PIN_WAIT_MSG + '<span class="cb-sub">🔑 엄마 확인하기 · 엄마가 눌러 주세요</span>';
       } else {
         cbtn.className = 'catch-btn' + (ci.limit > 1 ? ' bonus' : '');
         cbtn.disabled = false;
@@ -6560,6 +6641,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
           (isMorning ? '아침에 잡을 포켓몬을 다 잡았어요 · 저녁에 또 만나요' : '내일 또 새로운 친구를 만나요') + '</div>';
       } else if (locked) {
         foot.innerHTML = '<div class="reward-note">🔒 엄마가 오늘 포획을 잠갔어요 · 몬스터볼 ' + s.balls + '개는 그대로 모아요</div>';
+      } else if (pw) {
+        foot.innerHTML = '<div class="q-note pin">' + PIN_HELP_MSG + '</div>';
       } else if (s.balls > 0) {
         foot.innerHTML = '<div class="q-note">몬스터볼 ' + s.balls + '개 보유 · 1개를 사용해요' +
           (ci.limit > 1 ? ' · ' + (isMorning ? '아침 ' : '오늘 ') + ci.limit + '번' : '') + '</div>';
@@ -6577,8 +6660,38 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       jb.textContent = jobDone ? '오늘 완료 ✓' : '완료!';
     }
     paintJobWeek(id);
+    paintCatchGate(id);
     /* 퀘스트를 누르면 출발 바도 바로 따라오게 */
     if (typeof renderBusBar === 'function') renderBusBar();
+  }
+
+  /* ⚡ 포켓몬 탭의 잡기 진입부 — 대시보드와 같은 잠금·엄마 확인 상태를 보여 준다 */
+  function paintCatchGate(id) {
+    var box = document.querySelector('[data-catchgate="' + id + '"]');
+    if (!box) return;
+    if (MASTER) { box.hidden = true; box.innerHTML = ''; return; }
+    var s = state[id];
+    var period = viewPeriod() === 'morning' ? 'am' : 'pm';
+    var done = periodQDone(id, period);
+    var locked = catchLocked(id);
+    var pw = pinWaiting(id, period);
+    var ci = catchInfo(id, period);
+    var html = '';
+    if (locked) {
+      html = '<div class="cg-card lock"><b class="cg-title">🔒 오늘은 포획 잠금</b>' +
+        '<span class="cg-sub">몬스터볼 ' + s.balls + '개는 그대로 모아 둬요</span></div>';
+    } else if (pw) {
+      html = '<div class="cg-card pinwait"><b class="cg-title">' + PIN_WAIT_MSG + '</b>' +
+        '<span class="cg-sub">' + PIN_HELP_MSG + '</span>' +
+        '<button type="button" class="btn primary sm cg-btn" data-act="pinok">🔑 엄마 확인하기</button></div>';
+    } else if (done && ci.left > 0) {
+      html = '<div class="cg-card ready"><b class="cg-title">🔴 포켓몬을 잡을 수 있어요!</b>' +
+        '<span class="cg-sub">' + (ci.limit > 1
+          ? '⏰ 시간 보너스로 ' + ci.left + '번 남았어요' : '몬스터볼 ' + s.balls + '개 보유') + '</span>' +
+        '<button type="button" class="btn primary sm cg-btn" data-act="catch">🔴 포켓몬 잡기!</button></div>';
+    }
+    box.innerHTML = html;
+    box.hidden = !html;
   }
 
   /* ============================================================
@@ -9870,6 +9983,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     coinNote = {}; KIDLIST.forEach(function (k) { coinNote[k] = ''; });
     renderCoinGrant();
     renderModeUI();
+    renderPinGuard();
     paintBusSetting();
     closePinChange();
     if (!store.get('fpw2:pin')) {
@@ -9907,7 +10021,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       $('#pinError').textContent = '';
       $('#pinInput').value = '';
       closeModal($('#pinLayer'));
-      openMomLayer();
+      afterPinOk();
     } else {
       $('#pinError').textContent = 'PIN이 맞지 않아요';
       $('#pinInput').value = '';
@@ -10007,6 +10121,35 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     return 1;
   }
 
+  /* ---------- 🔒 포획 전 엄마 PIN 확인 ----------
+     켜 두면 퀘스트 4개를 다 해도 바로 잡을 수 없고, 엄마가 PIN 으로 확인해 준 때에 열린다.
+     시간 보너스(08:30·20:50)도 '퀘스트를 누른 시각'이 아니라 '엄마가 확인해 준 시각'으로 정한다. */
+  var PIN_WAIT_MSG = '⏳ 엄마 확인 기다리는 중!';
+  var PIN_HELP_MSG = '🔒 엄마가 확인해 주면 잡을 수 있어요';
+
+  function pinGuardOn(id) { return !MASTER && !!state[id].pinGuard; }
+  /* 엄마가 확인해 준 시각(그날의 0시부터 몇 분) · 아직이면 null */
+  function pinAt(id, period) {
+    var day = ensureDay(id);
+    var v = period === 'am' ? day.pinAm : day.pinPm;
+    return (typeof v === 'number' && isFinite(v) && v >= 0) ? v : null;
+  }
+  function pinApproved(id, period) { return pinAt(id, period) != null; }
+  /* 엄마가 확인해 준 시각 기준 보너스 (일찍 눌러 두고 나중에 확인받는 꼼수를 막는다) */
+  function pinBonusAt(id, period) {
+    var at = pinAt(id, period);
+    return at != null && at < (period === 'am' ? MORNING_CUTOFF : AFTERNOON_CUTOFF);
+  }
+  /* 퀘스트는 다 했지만 엄마 확인을 기다리는 시간대 */
+  function pinWaiting(id, period) {
+    return pinGuardOn(id) && periodQDone(id, period) && !pinApproved(id, period);
+  }
+  /* 그 시간대의 시간 보너스 (PIN 확인을 쓰면 확인한 시각 기준) */
+  function periodBonus(id, period) {
+    if (pinGuardOn(id)) return pinBonusAt(id, period);
+    return period === 'am' ? morningBonusNow() : afternoonBonusNow();
+  }
+
   function catchInfo(id, period) {
     var day = ensureDay(id);
     var p = period;
@@ -10040,13 +10183,13 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     return parts.join('+');
   }
 
-  /* 퀘스트를 다 마친 시간대는 몬스터볼을 주고 바로 잡을 수 있게 열어 둔다 (하루 한 번) */
-  function syncCatchDay(id) {
+  /* 그 시간대의 포획을 열고 몬스터볼을 준다 (이미 열렸으면 null) */
+  function grantPeriod(id, period, bonus) {
     var day = ensureDay(id);
     var s = state[id];
-    var got = [];
-    if (periodQDone(id, 'am') && !parseInt(day.amCatchLimit, 10)) {
-      var amB = morningBonusNow() ? 2 : 1;
+    if (period === 'am') {
+      if (parseInt(day.amCatchLimit, 10)) return null;
+      var amB = bonus ? 2 : 1;
       day.amCatchLimit = amB;
       if (!day.reward) {                       /* 이미 예전 방식으로 볼을 받았으면 더 주지 않는다 */
         s.balls += amB;
@@ -10054,18 +10197,29 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       }
       day.reward = true;
       day.rewardN = parseInt(day.rewardN, 10) || amB;
-      got.push({ period: 'am', balls: day.amBall ? amB : 0, limit: amB });
+      return { period: 'am', balls: day.amBall ? amB : 0, limit: amB };
     }
-    if (periodQDone(id, 'pm') && !parseInt(day.pmCatchLimit, 10)) {
-      var pmB = afternoonBonusNow() ? 2 : 1;
-      day.pmCatchLimit = pmB;
-      var already = (parseInt(day.pmCatchN, 10) || 0) || (day.caught ? 1 : 0);
-      if (!already) {                          /* 오늘 이미 잡은 기록이 있으면 볼을 더 주지 않는다 */
-        s.balls += pmB;
-        day.pmBall = pmB;
-      }
-      got.push({ period: 'pm', balls: day.pmBall ? pmB : 0, limit: pmB });
+    if (parseInt(day.pmCatchLimit, 10)) return null;
+    var pmB = bonus ? 2 : 1;
+    day.pmCatchLimit = pmB;
+    var already = (parseInt(day.pmCatchN, 10) || 0) || (day.caught ? 1 : 0);
+    if (!already) {                          /* 오늘 이미 잡은 기록이 있으면 볼을 더 주지 않는다 */
+      s.balls += pmB;
+      day.pmBall = pmB;
     }
+    return { period: 'pm', balls: day.pmBall ? pmB : 0, limit: pmB };
+  }
+
+  /* 퀘스트를 다 마친 시간대는 몬스터볼을 주고 바로 잡을 수 있게 열어 둔다 (하루 한 번)
+     · 🔒 포획 전 엄마 PIN 확인이 켜져 있으면 엄마가 확인해 준 뒤에만 연다 */
+  function syncCatchDay(id) {
+    var got = [];
+    ['am', 'pm'].forEach(function (p) {
+      if (!periodQDone(id, p)) return;
+      if (pinWaiting(id, p)) return;          /* 엄마 확인 전에는 열지 않는다 */
+      var g = grantPeriod(id, p, periodBonus(id, p));
+      if (g) got.push(g);
+    });
     if (got.length) {
       saveKid(id);
       got.forEach(function (g) {
@@ -10089,6 +10243,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       toast(p === 'am' ? '오전 준비를 모두 마치면 잡을 수 있어요' : '오후 퀘스트를 모두 마치면 잡을 수 있어요');
       return;
     }
+    /* 🔒 엄마 확인을 아직 못 받았으면 잡기 대신 PIN 확인 창을 연다 */
+    if (pinWaiting(id, p)) { askPinForCatch(id, p); return; }
     syncCatchDay(id);
     var ci = catchInfo(id, p);
     if (ci.left <= 0) {
@@ -10114,7 +10270,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     s.caught.push(entry);
     /* 🥚 8시 30분·8시 50분 전(보너스 시간)에 잡으면 포켓몬 알을 하나 받는다
        · 가끔(25%)은 반짝이는 특별한 알이 나온다 (부화하면 무조건 이로치·메가) */
-    var eggGet = p === 'am' ? morningBonusNow() : afternoonBonusNow();
+    var eggGet = periodBonus(id, p);
     var specialEgg = false;
     if (eggGet) {
       specialEgg = Math.random() < SPECIAL_EGG_CHANCE;
@@ -10200,6 +10356,109 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       '</div>' +
       '<div class="pk-mom-note' + (n > 0 ? ' on' : '') + '" data-mom-note="' + id + '">' + note + '</div>' +
     '</div>';
+  }
+
+  /* ============================================================
+     🔒 포획 전 엄마 PIN 확인 — 화면·확인 흐름
+     ============================================================ */
+  var pinPurpose = 'mom';        /* 'mom' = ⚙️ 엄마 선물함 · 'catch' = 🔑 엄마 확인 */
+  var pinCatchPeriod = 'am';
+
+  function pinLayerText(mode, period) {
+    var box = document.getElementById('pinLayer');
+    if (!box) return;
+    box.setAttribute('data-pinmode', mode);
+    var h = document.getElementById('pinTitle');
+    var p = document.getElementById('pinSub');
+    if (mode === 'catch') {
+      if (h) h.textContent = '🔑 엄마 확인';
+      if (p) p.textContent = (period === 'am' ? '오전' : '오후') + ' 퀘스트를 다 했어요 · 엄마가 4자리 PIN으로 확인해 주세요';
+    } else {
+      if (h) h.textContent = '🔒 엄마 선물 전용함';
+      if (p) p.textContent = '4자리 PIN을 입력해 주세요';
+    }
+  }
+
+  /* 아이가 🔑 엄마 확인하기 를 눌렀을 때 → 엄마 PIN 입력창 */
+  function askPinForCatch(id, period) {
+    var p = period === 'am' ? 'am' : 'pm';
+    if (!periodQDone(id, p)) {
+      toast(p === 'am' ? '오전 준비를 모두 마치면 엄마 확인을 받을 수 있어요'
+                       : '오후 퀘스트를 모두 마치면 엄마 확인을 받을 수 있어요');
+      return;
+    }
+    if (!pinWaiting(id, p)) { openCatch(id, p); return; }
+    pinPurpose = 'catch';
+    pinCatchPeriod = p;
+    pinLayerText('catch', p);
+    var inp = document.getElementById('pinInput');
+    if (inp) inp.value = '';
+    var err = document.getElementById('pinError');
+    if (err) err.textContent = '';
+    openModal('pinLayer');
+    setTimeout(function () { if (inp) inp.focus(); }, 60);
+  }
+
+  /* PIN 이 맞았을 때 (선물함 / 엄마 확인 두 가지 용도) */
+  function afterPinOk() {
+    if (pinPurpose === 'catch') {
+      var p = pinCatchPeriod;
+      pinPurpose = 'mom';
+      pinLayerText('mom');
+      approveCatch(KID, p);
+      return;
+    }
+    openMomLayer();
+  }
+
+  /* 엄마가 PIN 으로 확인해 준 시간대를 연다 (확인한 시각으로 보너스 결정) */
+  function approveCatch(id, period) {
+    var p = period === 'am' ? 'am' : 'pm';
+    if (!periodQDone(id, p)) {
+      toast(p === 'am' ? '오전 준비를 모두 마치면 엄마 확인을 받을 수 있어요'
+                       : '오후 퀘스트를 모두 마치면 엄마 확인을 받을 수 있어요');
+      return false;
+    }
+    var day = ensureDay(id);
+    if (!pinApproved(id, p)) day[p === 'am' ? 'pinAm' : 'pinPm'] = minOfDay(nowDate());
+    saveKid(id);
+    syncCatchDay(id);        /* 엄마가 확인해 준 시각 기준으로 보너스·몬스터볼 지급 */
+    paintKid(id);
+    var ci = catchInfo(id, p);
+    if (ci.left <= 0) {
+      toast(p === 'am' ? '아침에 잡을 포켓몬은 다 잡았어요 · 저녁에 또 만나요' : '오늘은 이미 포켓몬을 잡았어요');
+      return true;
+    }
+    toast('🔓 엄마 확인 완료! ' + (ci.limit > 1
+      ? '⏰ 시간 보너스로 ' + ci.limit + '번 잡을 수 있어요 (알 1개도 받아요)'
+      : '이제 포켓몬을 잡을 수 있어요'));
+    setTimeout(function () { openCatch(id, p); }, 320);
+    return true;
+  }
+
+  /* ⚙️ 선물함 안의 🔒 포획 전 엄마 PIN 확인 스위치 */
+  function renderPinGuard() {
+    var sec = document.getElementById('pinGuardSec');
+    var sw = document.getElementById('pinGuardSwitch');
+    var st = document.querySelector('[data-pinguard-state]');
+    if (!sw) return;
+    if (MASTER) { if (sec) sec.hidden = true; return; }
+    if (sec) sec.hidden = false;
+    var on = !!state[KID].pinGuard;
+    sw.classList.toggle('on', on);
+    sw.setAttribute('aria-checked', on ? 'true' : 'false');
+    if (st) st.textContent = on ? '켜짐' : '꺼짐';
+  }
+
+  function togglePinGuard() {
+    if (MASTER) return;
+    state[KID].pinGuard = !state[KID].pinGuard;
+    saveKid(KID);
+    renderPinGuard();
+    paintKid(KID);
+    toast(state[KID].pinGuard
+      ? '🔒 포획 전 엄마 PIN 확인을 켰어요 · 이제 엄마가 확인해 줘야 잡을 수 있어요'
+      : '🔓 포획 전 엄마 PIN 확인을 껐어요 · 퀘스트 4개를 다 하면 바로 잡을 수 있어요');
   }
 
 
@@ -15623,6 +15882,9 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (gb) gb.addEventListener('click', function () {
       $('#pinInput').value = '';
       $('#pinError').textContent = '';
+      /* ⚙️ 로 열었으면 언제나 엄마 선물함 (포획 확인 모드에서 돌아온 경우 대비) */
+      pinPurpose = 'mom';
+      pinLayerText('mom');
       openModal('pinLayer');
       setTimeout(function () { $('#pinInput').focus(); }, 60);
     });
@@ -15656,6 +15918,10 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       else if (k === 'ok') checkPin();
       else if (inp.value.length < 4) { inp.value += k; $('#pinError').textContent = ''; }
     });
+
+    /* 🔒 포획 전 엄마 PIN 확인 스위치 */
+    var pgs = $('#pinGuardSwitch');
+    if (pgs) pgs.addEventListener('click', togglePinGuard);
 
     /* 몬스터볼 선물 */
     var rr = $('#recipRow');
@@ -15982,7 +16248,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   Object.defineProperty(window, '__fpwState', {
     value: function () {
       return JSON.parse(JSON.stringify({
-        kid: KID, kids: KIDLIST, state: state, mode: modeVal, pin: pinCode,
+        kid: KID, kids: KIDLIST, state: state, mode: modeVal, pin: pinCode, today: TODAY(),
         dexMax: DEX_MAX, dexTotal: DEX_TOTAL, bgCount: BGS.length, palCount: PALS.length,
         shop: { kid: shopKid, tab: shopTab }, tab: curTab
       }));
