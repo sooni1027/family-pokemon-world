@@ -5064,6 +5064,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
           </div>
           <div class="m-chips" id="mailSentChips" role="group" aria-label="보낸 편지 필터">
             <button type="button" class="m-chip on" data-mfilter="all" aria-pressed="true">전체 <i>0</i></button>
+            <button type="button" class="m-chip" data-mfilter="unread" aria-pressed="false">안 읽음 <i>0</i></button>
             <button type="button" class="m-chip" data-mfilter="gift" aria-pressed="false">🎁 선물 <i>0</i></button>
           </div>
           <div class="m-cards" id="mailSentList"></div>
@@ -14477,6 +14478,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     var cls = L.paper === 'cloud' ? 'sky' : (L.paper === 'sakura' ? 'pink' : (L.paper === 'night' ? 'night' : ''));
     var tags = '';
     if (inbox && !L.read) tags += '<span class="mc-tag new">NEW</span>';
+    if (!inbox && !L.read) tags += '<span class="mc-tag">아직 안 읽음</span>';
     if (L.gift) tags += '<span class="mc-tag gift">🎁 선물</span>';
     if (L.draw) tags += '<span class="mc-tag draw">손그림</span>';
     var prev = String(L.text || '').replace(/\s+/g, ' ').trim();
@@ -14519,9 +14521,9 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     }
     var chips = $(inbox ? '#mailChips' : '#mailSentChips');
     if (chips) {
-      var map = inbox
-        ? { all: all.length, unread: all.filter(function (L) { return !L.read; }).length, gift: all.filter(function (L) { return !!L.gift; }).length }
-        : { all: all.length, gift: all.filter(function (L) { return !!L.gift; }).length };
+      var unreadN = all.filter(function (L) { return !L.read; }).length;
+      var giftN = all.filter(function (L) { return !!L.gift; }).length;
+      var map = { all: all.length, unread: unreadN, gift: giftN };
       $$('.m-chip', chips).forEach(function (b) {
         var f = b.getAttribute('data-mfilter');
         b.classList.toggle('on', f === filter);
