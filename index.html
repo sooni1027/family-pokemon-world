@@ -49,7 +49,9 @@
   }
   a.card.eunwoo{border-color:#9ecdf3;}
   a.card.seungwoo{border-color:#a8ddc2;}
+  a.card.master{border-color:#cdb4f5;background:linear-gradient(180deg,#fbf7ff 0%,#ffffff 52%);}
   a.card img{width:clamp(84px,12vw,124px);height:auto;display:block;}
+  a.card .crown{font-size:clamp(52px,8vw,78px);line-height:1;filter:drop-shadow(0 6px 10px rgba(150,110,20,.28));}
   .name{font-size:clamp(20px,2.6vw,27px);font-weight:800;letter-spacing:-.02em;}
   .desc{font-size:clamp(12px,1.5vw,15px);color:var(--muted);}
   .go{
@@ -58,6 +60,13 @@
   }
   .eunwoo .go{background:var(--blue);}
   .seungwoo .go{background:#1f9d63;}
+  .master .go{background:linear-gradient(135deg,#7b3fd4,#5b23a8);}
+  .master .name{color:#4a2094;}
+  .master .badge{
+    align-self:center;padding:2px 10px 3px;border-radius:999px;
+    background:linear-gradient(135deg,#fbeeb2,#eccb62 55%,#d1a52c);color:#4a2f00;
+    font-size:clamp(10px,.9vw,12px);font-weight:900;letter-spacing:-.2px;
+  }
   footer{
     margin-top:clamp(18px,3vw,34px);color:#6d859c;font-size:clamp(11px,1.3vw,13px);
     text-align:center;line-height:1.6;
@@ -78,6 +87,13 @@
       <img src="seungwoo/icon-192.png" alt="" width="192" height="192">
       <span class="name">승우</span>
       <span class="desc">승우 포켓몬 월드</span>
+      <span class="go">들어가기</span>
+    </a>
+    <a class="card master" href="master/" aria-label="엄마 마스터 포켓몬 월드 열기">
+      <span class="crown" aria-hidden="true">👑</span>
+      <span class="name">엄마</span>
+      <span class="badge">Lv.99 마스터</span>
+      <span class="desc">1,073마리 전부 보유 · 교환 코드 발급</span>
       <span class="go">들어가기</span>
     </a>
   </div>
