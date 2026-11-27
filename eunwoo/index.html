@@ -2478,9 +2478,13 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 .egg-nav[hidden]{display:none}
 .egg-nav:active{transform:scale(.94);color:#5b4bd6}
 .egg-page{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;min-height:0}
-.egg-page .egg-ownrow{display:flex;align-items:flex-end;justify-content:center;gap:10px;min-height:0}
+.egg-page .egg-ownrow{display:flex;align-items:flex-end;justify-content:center;gap:10px;min-height:0;width:100%}
+/* 알이 한 종류만 있을 때는 그 알 하나를 카드 정중앙에 */
+.egg-page.one .egg-ownrow{justify-content:center;align-items:center}
 .egg-page figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:1px}
 .egg-page figure img{width:92px;height:120px;object-fit:contain;filter:drop-shadow(0 5px 7px rgba(120,100,60,.25))}
+/* 알이 한 종류만 있을 때는 그 알 하나를 가운데에 조금 더 크게 */
+.egg-page figure.solo img{width:108px;height:140px}
 .egg-page figure.sp img{filter:drop-shadow(0 0 8px rgba(196,140,255,.7))}
 .egg-page figcaption{font-size:10.5px;font-weight:900;color:#6b7c93;letter-spacing:-.3px;white-space:nowrap}
 .egg-page figcaption b{color:#3d4a63;font-size:11px}
@@ -10458,17 +10462,23 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (!n && !sp) {
       return '<div class="egg-page owned empty">' +
         '<div class="egg-emptying">' + (A.eggOnly ? '<img src="' + A.eggOnly + '" alt="" draggable="false">' : '🥚') + '</div>' +
-        '<div class="egg-title">아직 알이 없어요</div>' +
+        '<div class="egg-title">알이 없어요! 알을 찾으러 가요</div>' +
         '<div class="egg-note">8시 30분 · 8시 50분 전에 준비를 마치면 알을 받을 수 있어요!</div>' +
         '</div>';
     }
-    return '<div class="egg-page owned">' +
-      '<div class="egg-ownrow">' +
-        '<figure><img src="' + (A.eggOnly || '') + '" alt="일반 알" draggable="false"><figcaption>일반 알 <b data-egg-n="normal">' + n + '</b>개</figcaption></figure>' +
-        '<figure class="sp"><img src="' + (A.eggSpecial || '') + '" alt="특별한 알" draggable="false"><figcaption>특별한 알 <b data-egg-n="special">' + sp + '</b>개</figcaption></figure>' +
-      '</div>' +
+    /* 없는 알은 아예 그리지 않는다 (특별한 알이 0개면 그림도 ‘특별한 알 0개’도 없음) */
+    var figs = '';
+    if (n) {
+      figs += '<figure' + (sp ? '' : ' class="solo"') + '><img src="' + (A.eggOnly || '') + '" alt="일반 알" draggable="false"><figcaption>일반 알 <b data-egg-n="normal">' + n + '</b>개</figcaption></figure>';
+    }
+    if (sp) {
+      figs += '<figure class="sp' + (n ? '' : ' solo') + '"><img src="' + (A.eggSpecial || '') + '" alt="특별한 알" draggable="false"><figcaption>특별한 알 <b data-egg-n="special">' + sp + '</b>개</figcaption></figure>';
+    }
+    var note = (n && sp) ? '일반 알 ' + n + '개 · 특별한 알 ' + sp + '개 · ' : '';
+    return '<div class="egg-page owned' + (n && sp ? '' : ' one') + '">' +
+      '<div class="egg-ownrow">' + figs + '</div>' +
       '<div class="egg-title">알 ' + (n + sp) + '개를 모았어요</div>' +
-      '<div class="egg-note">일반 알 ' + n + '개 · 특별한 알 ' + sp + '개 · 알과 부화장치는 🔬 오박사님 연구실에서 써요</div>' +
+      '<div class="egg-note">' + note + '알과 부화장치는 🔬 오박사님 연구실에서 써요</div>' +
       '</div>';
   }
 
@@ -10789,7 +10799,10 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
             time: (function () { var t = $('#col-' + id + ' [data-egg-time]'); return t ? t.textContent : ''; })(),
             due: (function () { var t = $('#col-' + id + ' [data-egg-due]'); return t ? t.textContent : ''; })(),
             title: (function () { var t = $('#col-' + id + ' .egg-htitle, #col-' + id + ' .egg-title'); return t ? t.textContent : ''; })(),
-            owned: (function () { var n = $('#col-' + id + ' [data-egg-n="normal"]'); var s = $('#col-' + id + ' [data-egg-n="special"]'); return n ? { normal: n.textContent, special: s ? s.textContent : '' } : null; })(),
+            owned: (function () { var n = $('#col-' + id + ' [data-egg-n="normal"]'); var s = $('#col-' + id + ' [data-egg-n="special"]'); return (n || s) ? { normal: n ? n.textContent : '', special: s ? s.textContent : '' } : null; })(),
+            figs: $$('#col-' + id + ' .egg-ownrow figure').length,
+            hasSpecialImg: !!$('#col-' + id + ' .egg-ownrow figure img[alt="특별한 알"]'),
+            note: (function () { var t = $('#col-' + id + ' .egg-note'); return t ? t.textContent : ''; })(),
             openBtn: (function () { var b = $('#col-' + id + ' .egg-open'); return b ? b.textContent : ''; })(),
             banner: (function () { var b = $('#col-' + id + ' [data-egg-banner]'); return b && !b.hidden ? b.textContent.replace(/\s+/g, ' ').trim() : ''; })(),
             badge: (function () { var b = $('#col-' + id + ' [data-egg-badge]'); return b ? b.textContent : ''; })(),
@@ -11005,9 +11018,10 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     var eggs = eggCount(KID), sp = specialEggCount(KID);
     var hat = hatcherCount(KID), hsp = specialHatcherCount(KID);
     var basic = labBasicUsedToday(KID) ? '사용완료' : '가능';
+    /* 특별한 알이 없으면 ✨ 특별 0 을 띄우지 않는다 (아이들이 오해하지 않게) */
     $$('[data-lab-eggs]').forEach(function (el) {
-      el.textContent = '🥚 일반 ' + eggs + ' · ✨ 특별 ' + sp;
-      el.setAttribute('title', '일반 알 ' + eggs + '개 · 특별한 알 ' + sp + '개');
+      el.textContent = sp > 0 ? '🥚 일반 ' + eggs + ' · ✨ 특별 ' + sp : '🥚 알 ' + eggs + '개';
+      el.setAttribute('title', sp > 0 ? '일반 알 ' + eggs + '개 · 특별한 알 ' + sp + '개' : '일반 알 ' + eggs + '개');
     });
     $$('[data-lab-hatch]').forEach(function (el) {
       el.textContent = '🔮 기본 ' + basic + ' · 일반 ' + hat + ' · 특별 ' + hsp;
