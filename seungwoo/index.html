@@ -3429,8 +3429,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 
 /* 큰 파트너(아이보다 큰 포켓몬)는 아이 뒤 오른쪽에 서서 서로 가리지 않게 */
 .stage.behind .partner-box{left:58%}
-.stage.behind .figure{transform:translateX(-30px)}
-.stage.has-pal.behind .figure{transform:translateX(-30px)}
+.stage.behind .figure{transform:translate(calc(-30px + var(--dx,0px)),var(--dy,0px))}
+.stage.has-pal.behind .figure{transform:translate(calc(-30px + var(--dx,0px)),var(--dy,0px))}
 
 /* 상점 메뉴: 세로로 긴 왼쪽 창을 알약 버튼이 고르게 채우게 */
 .npc-menu{gap:3px}
