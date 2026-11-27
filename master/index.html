@@ -4157,6 +4157,143 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 .mail-layer.open .mail-shell{animation:mailIn .22s cubic-bezier(.2,.9,.3,1.1)}
 @keyframes mailIn{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
 
+/* ==========================================================================
+   📱 태블릿에서 손가락으로 쓰기 편하게 — 스티커 삭제 배지 · 전체 크기 키우기
+   ========================================================================== */
+/* 붙인 스티커: 톡 누르면 큰 ✕ 삭제 배지(터치 영역 32px)가 또렷하게 보인다 */
+.m-placed .mdel{
+  width:32px;height:32px;right:-10px;top:-10px;border-radius:50%;
+  border:2.5px solid #fff;background:#f2426b;color:#fff;
+  font-size:16px;line-height:27px;text-align:center;font-weight:900;padding:0;
+  display:none;cursor:pointer;z-index:6;box-shadow:0 3px 8px rgba(200,40,80,.42);
+}
+.m-placed.sel .mdel{display:block}
+.m-placed.sel{outline:3px dashed rgba(124,108,245,.9);outline-offset:4px;border-radius:10px}
+@media (hover:hover){.m-placed:hover .mdel{display:block}}
+/* 🗑️ 스티커 지우기 (고른 스티커만 / 없으면 모두) */
+.m-stk-clear{
+  width:100%;min-height:42px;border-radius:11px;border:1.6px solid #f2c7d2;background:#fff5f8;
+  color:#b43c58;font-size:14px;font-weight:900;letter-spacing:-.3px;cursor:pointer;
+}
+.m-stk-clear:hover{background:#ffeef3;border-color:#eaaec0}
+.m-stk-clear:disabled{opacity:.5;cursor:default}
+
+@media (min-width:821px){
+  /* 위쪽 바 · 탭 */
+  .m-top{gap:10px;padding:10px 14px}
+  .m-back{height:44px;padding:0 16px;font-size:15px;border-radius:13px}
+  .m-ball{width:28px;height:28px;flex-basis:28px;border-width:2.5px}
+  .m-brand b{font-size:21px}
+  .m-who{font-size:13.5px}
+  .m-tab{height:46px;padding:0 18px;font-size:16px;gap:6px;border-radius:14px}
+  .m-cnt{min-width:22px;height:22px;font-size:13px}
+  .m-ico{width:42px;height:42px;font-size:18px;border-radius:12px}
+  .m-net{font-size:13px;padding:5px 10px}
+  .m-panes{padding:12px 14px 14px}
+
+  /* 받은·보낸 편지 목록 */
+  .m-list{padding:14px 14px 12px;gap:11px;border-radius:20px}
+  .m-list-head b{font-size:19px}
+  .m-new{font-size:13px;padding:3px 10px 4px}
+  .m-tot{font-size:13.5px}
+  .m-chip{padding:8px 16px 9px;font-size:14.5px}
+  .m-cards{gap:9px}
+  .m-card{padding:11px 12px;border-radius:16px}
+  .mc-thumb{flex:0 0 56px;height:52px}
+  .mc-from{font-size:13px}
+  .mc-from img{width:20px;height:20px}
+  .mc-title{font-size:16px}
+  .mc-prev{font-size:14px}
+  .mc-tag{font-size:12px;padding:2px 9px 3px}
+  .m-write-cta{padding:11px 13px;border-radius:16px}
+  .m-write-cta .wic{width:38px;height:38px;flex-basis:38px;font-size:20px;border-radius:11px}
+  .m-write-cta .wt{font-size:15.5px}
+  .m-write-cta .wt small{font-size:12.5px}
+  .m-write-cta .go{font-size:14px;padding:8px 14px 9px;border-radius:11px}
+  .m-foot{font-size:12.5px}
+  .m-empty{font-size:14.5px}
+
+  /* 열린 편지 */
+  .m-read{padding:14px 16px;border-radius:20px}
+  .m-read-empty{font-size:15px}
+  .mr-face{width:40px;height:40px;flex-basis:40px;font-size:21px}
+  .mr-title{font-size:19px}
+  .mr-sub{font-size:13px}
+  .mr-btn{font-size:14.5px;padding:8px 14px 9px;border-radius:12px}
+  .mr-text{font-size:clamp(21px,2.6vw,30px);line-height:1.5}
+  .mr-env .mre-to{font-size:clamp(17px,2.1vw,26px)}
+  .mr-gift{padding:11px 13px;gap:13px;border-radius:16px}
+  .mg-art{flex:0 0 78px;height:72px}
+  .mg-big{font-size:17px}
+  .mg-line{font-size:14.5px}
+  .mg-pill{font-size:12px;padding:2px 9px 3px}
+  .mg-btn{font-size:16px;padding:12px 18px 13px;border-radius:13px}
+  .mg-done{font-size:14.5px;padding:10px 14px 11px}
+  .mg-after{font-size:12px}
+
+  /* 편지 쓰기 */
+  .m-lbl{font-size:15px}
+  .m-recip{gap:8px}
+  .m-recip-btn{padding:6px 16px 7px 7px;font-size:15.5px;gap:7px}
+  .m-recip-btn img{width:32px;height:32px}
+  .m-recip-btn .rc{font-size:19px}
+  .m-write-grid{grid-template-columns:minmax(0,272px) minmax(0,1fr) minmax(0,300px);gap:12px}
+  .m-tools{padding:12px;gap:12px;border-radius:18px}
+  .m-tool-sec{gap:7px}
+  .m-tool-head{font-size:15px}
+  .m-tool-head span{font-size:13px}
+  .m-tool-head .ck{font-size:14px}
+  .m-papers{gap:7px}
+  .m-paper-thumb{height:60px;border-radius:11px}
+  .m-paper-thumb .nm{font-size:12px;padding:2px 0 3px}
+  .m-paper-thumb .tick{width:19px;height:19px;font-size:12px;line-height:19px;right:4px;top:4px}
+  .m-envs{gap:7px}
+  .m-env-thumb{height:52px;border-radius:10px}
+  .m-env-thumb .nm{font-size:11.5px;padding:2px 0 3px}
+  .m-env-thumb.on::after{width:18px;height:18px;font-size:11px;line-height:18px;right:4px;top:3px}
+  .m-stk-target{gap:7px}
+  .m-stk-target button{padding:9px 8px 10px;font-size:14px;border-radius:10px}
+  .m-stks{gap:6px}
+  .m-stk-btn{height:58px;border-radius:11px;border-width:1.8px}
+  .m-stk-btn .em{font-size:30px;line-height:50px}
+  .m-stk-clear{min-height:46px;font-size:15px;border-radius:12px}
+  .m-help{display:none}
+  .m-gift-grid{gap:6px;max-height:210px;padding:4px;border-radius:11px}
+  .m-gift-cell .no{font-size:10.5px;left:3px;bottom:2px}
+  .m-gift-pick{padding:9px 10px;gap:9px;border-radius:12px}
+  .m-gift-pick img{width:48px;height:48px}
+  .m-gift-pick .gp-copy{font-size:14.5px}
+  .m-gift-pick .gp-copy small{font-size:12px}
+  .m-gift-pick .gp-del{font-size:16px;padding:7px 10px;border-radius:9px;min-width:44px;min-height:40px}
+  .m-shiny-toggle{font-size:13.5px;padding:8px 13px 9px}
+  .m-paper-col{gap:8px}
+  .m-paper-bar,.m-pen-bar{gap:8px}
+  .m-paper-title{font-size:15px}
+  .m-modes{gap:7px}
+  .m-modes button{font-size:14px;padding:10px 14px 11px;border-radius:11px;min-height:40px}
+  .m-colors{gap:7px;flex-wrap:wrap}
+  .m-color{width:32px;height:32px;border-width:2.5px}
+  .m-widths{gap:7px;flex:1 1 100%}
+  .m-wdot{width:42px;height:40px;border-radius:10px}
+  .m-pen-btn{font-size:14px;padding:10px 8px 11px;border-radius:11px;min-height:42px;flex:1 1 0;min-width:0}
+  #mbEraser,#mbUndo,#mbClear{flex:1 1 0}
+  .m-text{font-size:clamp(24px,2.6vw,30px);line-height:1.5;padding:6% 6.5%}
+  .m-send-hint{font-size:12.5px}
+
+  /* 오른쪽: 봉투 미리보기 + 보내기 */
+  .m-side{padding:12px;gap:10px;border-radius:18px}
+  .m-side-head{font-size:15px}
+  .m-side-head span{font-size:12.5px;padding:2px 9px 3px}
+  .m-env-preview .mve-to{font-size:clamp(14px,1.45vw,19px)}
+  .m-sum{padding:10px 11px;gap:5px;border-radius:12px}
+  .m-sum-row{font-size:13.5px}
+  .m-sum-row b{font-size:13.5px}
+  .m-steps{font-size:12px;padding:7px 2px}
+  .m-send{font-size:18px;padding:15px 14px 16px;border-radius:15px}
+  .m-draft{font-size:15px;padding:12px 12px 13px;border-radius:13px}
+  .m-side-foot{font-size:12px}
+}
+
 </style>
 </head>
 <body>
@@ -5100,6 +5237,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
                 <button type="button" class="on" data-mstktarget="paper">편지지에</button>
                 <button type="button" data-mstktarget="env">봉투에</button>
               </div>
+              <button type="button" class="m-stk-clear" id="mbStkClear">🗑️ 스티커 모두 지우기</button>
               <div class="m-stks" id="mbStickers"></div>
             </div>
             <div class="m-tool-sec" id="mbGiftSec" hidden>
@@ -5108,7 +5246,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
               <div class="m-gift-grid" id="mbGiftGrid"></div>
               <div id="mbGiftPick"></div>
             </div>
-            <div class="m-help">✏️ 손가락으로 쓱쓱 그리거나 ⌨️ 글씨를 타자로 써요 · 스티커는 콕 눌러 붙이고 끌어서 옮겨요</div>
+            <div class="m-help">✏️ 그리거나 ⌨️ 글씨로 써요 · 붙인 스티커는 콕 누르면 ✕로 지워져요</div>
           </aside>
 
           <div class="m-paper-col">
@@ -14305,6 +14443,105 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     return out;
   }
 
+  /* ---------- 포켓몬 이름 (No.OOO → 한글) ----------
+     마스터가 보낸 선물의 이름이 비어 있거나 'No.614' 처럼 번호만 남아 있으면
+     이름 캐시 → PokeAPI 한국어 이름 순서로 찾아 화면·도감에 한글로 보여 준다. */
+  function mbNoName(n) {
+    var s = String(n == null ? '' : n).trim();
+    return !s || /^No\./.test(s);
+  }
+  function mbMonName(id, fallbackName) {
+    id = parseInt(id, 10) || 0;
+    var fb = String(fallbackName == null ? '' : fallbackName).trim();
+    if (!mbNoName(fb)) return fb;
+    var nm = '';
+    try { nm = String(monName(id) || '').trim(); } catch (e) { nm = ''; }
+    if (!mbNoName(nm)) return nm;
+    return fb || nm || ('No.' + id);
+  }
+  /* 기기에 한글 이름이 아직 없는 번호인가 (편지에 적힌 이름과 별개로 확인) */
+  function mbNeedsKo(id) {
+    id = parseInt(id, 10) || 0;
+    if (!(id > 0)) return false;
+    var cur = '';
+    try { cur = String(koSync(id) || ''); } catch (e) { cur = ''; }
+    return mbNoName(cur);
+  }
+  /* 이름이 아직 번호인 포켓몬만 골라 비동기로 한글 이름을 받아 온다 */
+  function mbEnsureKo(ids, onDone) {
+    var pend = [];
+    (ids || []).forEach(function (id) {
+      id = parseInt(id, 10);
+      if (!(id > 0)) return;
+      var cur = '';
+      try { cur = koSync(id); } catch (e) { cur = ''; }
+      if (!mbNoName(cur)) return;
+      if (typeof fetchKo !== 'function') return;
+      pend.push(fetchKo(id, 4000));
+    });
+    if (!pend.length) return Promise.resolve(false);
+    return Promise.all(pend).then(function (vals) {
+      var got = false;
+      for (var i = 0; i < vals.length; i++) if (!mbNoName(vals[i])) { got = true; break; }
+      if (got && typeof onDone === 'function') { try { onDone(); } catch (e) {} }
+      return got;
+    }, function () { return false; });
+  }
+  /* 우편함 안에서 이름이 비어 있는 선물 포켓몬(이미 받은 선물 포함)을 모은다 */
+  function mbKoGiftIds() {
+    var ids = [];
+    Object.keys(MB.letters).forEach(function (k) {
+      var g = MB.letters[k].gift;
+      if (g && g.id && mbNeedsKo(g.id)) ids.push(g.id);
+    });
+    var cg = MB.compose && MB.compose.gift;
+    if (cg && cg.id && mbNeedsKo(cg.id)) ids.push(cg.id);
+    var s = state[KID];
+    if (s && s.caught) s.caught.forEach(function (c) { if (c && c.id && c.via === 'gift' && mbNeedsKo(c.id)) ids.push(c.id); });
+    return ids;
+  }
+  function mbKoApplied() {
+    if (MB.compose && MB.compose.gift) MB.compose.gift.name = mbMonName(MB.compose.gift.id, MB.compose.gift.name);
+    Object.keys(MB.letters).forEach(function (k) {
+      var g = MB.letters[k].gift;
+      if (g) g.name = mbMonName(g.id, g.name);
+    });
+    var s = state[KID];
+    if (s && s.caught) {
+      var touched = false;
+      s.caught.forEach(function (c) {
+        if (!c || !c.id) return;
+        var nm = mbMonName(c.id, c.name);
+        if (nm && nm !== c.name) { c.name = nm; touched = true; }
+      });
+      if (touched) { try { saveKid(KID); } catch (e) {} }
+    }
+    try { paintKid(KID); } catch (e) {}
+    try { paintVillage(KID); } catch (e) {}
+    try { if (typeof paintSideCards === 'function') paintSideCards(KID); } catch (e) {}
+    try { if (typeof renderDex === 'function' && $('#dexLayer') && !$('#dexLayer').hidden) renderDex(); } catch (e) {}
+    mbPaintBadge();
+    if (MB.open) {
+      if (MB.tab === 'inbox') { mbPaintList('inbox'); mbPaintRead('inbox'); }
+      else if (MB.tab === 'sent') { mbPaintList('sent'); mbPaintRead('sent'); }
+      else { mbPaintGift(); mbPaintSum(); }
+    }
+  }
+  var mbKoT = null, mbKoAsked = '';
+  function mbKoScan(delay) {
+    var ids = mbKoGiftIds();
+    if (!ids.length) return;
+    var sig = ids.join(',');
+    if (sig === mbKoAsked && !delay) return;
+    clearTimeout(mbKoT);
+    mbKoT = setTimeout(function () {
+      mbKoAsked = sig;
+      mbEnsureKo(ids, function () { mbKoApplied(); });
+      /* 실패해도 잡빠지지 않게 잠시 뒤 다시 시도할 수 있게 비운다 */
+      setTimeout(function () { if (mbKoAsked === sig) mbKoAsked = ''; }, 6000);
+    }, delay || 0);
+  }
+
   /* ---------- Firebase REST ---------- */
   function mbReq(path, opts) {
     opts = opts || {};
@@ -14405,6 +14642,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 
   function mbAfterData() {
     mbPaintBadge();
+    mbKoScan();
     if (!MB.open) return;
     if (MB.tab === 'inbox') { mbPaintList('inbox'); mbPaintRead('inbox'); }
     else if (MB.tab === 'sent') { mbPaintList('sent'); mbPaintRead('sent'); }
@@ -14465,10 +14703,13 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 
   /* ---------- 목록 ---------- */
   function mbTitleOf(L) {
-    if (L.title) return L.title;
-    var t = String(L.text || '').split('\n')[0].trim();
-    if (t) return t.length > 26 ? t.slice(0, 26) + '…' : t;
-    if (L.gift) return '🎁 ' + (L.gift.name || monName(L.gift.id)) + ' 선물 편지';
+    var t = String(L.title || '');
+    /* 예전에 번호(No.614)로 저장된 선물 편지 제목도 한글 이름으로 보여 준다 */
+    if (t && L.gift) t = t.replace(/No\.\d+/g, mbMonName(L.gift.id, L.gift.name));
+    if (t) return t;
+    var t2 = String(L.text || '').split('\n')[0].trim();
+    if (t2) return t2.length > 26 ? t2.slice(0, 26) + '…' : t2;
+    if (L.gift) return '🎁 ' + mbMonName(L.gift.id, L.gift.name) + ' 선물 편지';
     if (L.draw) return '손그림 편지';
     return '우리 가족 편지';
   }
@@ -14533,6 +14774,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       });
     }
     mbPaintBadge();
+    mbKoScan();
   }
 
   /* ---------- 열린 편지 ---------- */
@@ -14545,7 +14787,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   function mbGiftBand(L) {
     var g = L.gift;
     if (!g) return '';
-    var name = g.name || monName(g.id);
+    var name = mbMonName(g.id, g.name);
     var mine = L.to === KID;
     var art = artUrl(g.id);
     var artHtml = '<img src="' + art + '" alt="" onerror="this.style.visibility=\'hidden\'">';
@@ -14608,6 +14850,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       : '<div class="m-read-empty"><span class="big">💌</span>' +
         (inbox ? '편지를 콕 눌러 봉투를 열어 보세요.<br>엄마·형이 보낸 편지가 여기 도착해요.'
                 : '보낸 편지를 콕 누르면<br>내가 쓴 편지를 다시 볼 수 있어요.') + '</div>';
+    mbKoScan();
   }
 
   /* ---------- 편지 열기 ---------- */
@@ -14639,11 +14882,12 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (!L || !L.gift || L.gift.claimed || L.to !== KID) return;
     var g = L.gift;
     var s = state[KID];
+    var known = !mbNeedsKo(g.id);
     var have = null;
     for (var i = 0; i < s.caught.length; i++) if (s.caught[i].id === g.id) { have = s.caught[i]; break; }
     var fresh = false, shinyUp = false;
     if (!have) {
-      var entry = { id: g.id, name: g.name || monName(g.id), date: TODAY(), ts: Date.now(), via: 'gift' };
+      var entry = { id: g.id, name: mbMonName(g.id, g.name), date: TODAY(), ts: Date.now(), via: 'gift' };
       if (g.shiny) entry.shiny = true;
       s.caught.push(entry);
       fresh = true;
@@ -14656,10 +14900,17 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     try { paintKid(KID); } catch (e) {}
     try { paintVillage(KID); } catch (e) {}
     try { if (typeof paintSideCards === 'function') paintSideCards(KID); } catch (e) {}
-    var nm = g.name || monName(g.id);
-    celebrate('🎁', '선물을 받았어요!', nm + (g.shiny ? ' ✨ 이로치' : '') + ' · 도감에 등록했어요');
-    toast(fresh ? ('🎁 ' + nm + ' 받았어요! 도감에 등록했어요')
-                : (shinyUp ? ('✨ ' + nm + ' 이로치로 도감에 담았어요!') : ('🎁 ' + nm + '은(는) 이미 도감에 있어요')));
+    var nm = mbMonName(g.id, g.name);
+    if (known) {
+      celebrate('🎁', '선물을 받았어요!', nm + (g.shiny ? ' ✨ 이로치' : '') + ' · 도감에 등록했어요');
+      toast(fresh ? ('🎁 ' + nm + ' 받았어요! 도감에 등록했어요')
+                  : (shinyUp ? ('✨ ' + nm + ' 이로치로 도감에 담았어요!') : ('🎁 ' + nm + '은(는) 이미 도감에 있어요')));
+    } else {
+      /* 이름을 아직 몰라도 받기는 바로 된다 — 온라인에서 한글 이름을 받아 채운다 */
+      celebrate('🎁', '선물을 받았어요!', '도감에 등록했어요');
+      toast(fresh ? '🎁 선물을 받았어요! 도감에 등록했어요'
+                  : (shinyUp ? '✨ 이로치로 도감에 담았어요!' : '🎁 이미 도감에 있어요'));
+    }
     mbPatch('/letters/' + encodeURIComponent(key) + '/gift.json', { claimed: true }).then(
       function () {},
       function () { toast('선물은 받았어요! 연결이 잠깐 끊겨 기록은 다음에 다시 맞출게요'); }
@@ -14667,6 +14918,25 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     mbPaintList('inbox');
     mbPaintRead(MB.tab === 'sent' ? 'sent' : 'inbox');
     mbPaintBadge();
+    /* 선물 포켓몬은 잡기·부화와 달리 이름 조회가 없어서 도감·수납함에 No.614 로 남기 쉽다.
+       수령할 때 한글 이름을 받아 기록과 화면(수납함·도감·마을)까지 바로 고친다. */
+    if (!known) {
+      mbEnsureKo([g.id], function () {
+        var nm2 = mbMonName(g.id, '');
+        if (mbNoName(nm2)) return;
+        g.name = nm2;
+        var st = state[KID];
+        for (var j = 0; j < st.caught.length; j++) if (st.caught[j].id === g.id) st.caught[j].name = nm2;
+        saveKid(KID);
+        try { paintKid(KID); } catch (e) {}
+        try { paintVillage(KID); } catch (e) {}
+        try { if (typeof paintSideCards === 'function') paintSideCards(KID); } catch (e) {}
+        mbPaintList('inbox');
+        mbPaintRead(MB.tab === 'sent' ? 'sent' : 'inbox');
+        mbPaintBadge();
+        toast('🎁 받은 포켓몬 이름을 한글로 찾았어요 · ' + nm2);
+      });
+    }
   }
 
   /* ---------- 탭 ---------- */
@@ -14728,14 +14998,22 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     });
     var note = $('#mbStkNote');
     if (note) note.textContent = (MB.compose.stickers.length + MB.compose.envStickers.length) + '개';
+    var cb = $('#mbStkClear');
+    if (cb) {
+      var nAll = MB.compose.stickers.length + MB.compose.envStickers.length;
+      var selOn = !!(mbSelStk && (mbSelStk.target === 'env' ? MB.compose.envStickers : MB.compose.stickers)[mbSelStk.idx]);
+      cb.disabled = !nAll;
+      cb.textContent = selOn ? '🗑️ 고른 스티커 지우기' : '🗑️ 스티커 모두 지우기';
+    }
   }
   function mbPlacedHtml(st, i, target) {
-    var sz = Math.round((target === 'env' ? 26 : 46) * (st.s || 1));
+    var sz = Math.round((target === 'env' ? 34 : 62) * (st.s || 1));
+    var sel = mbSelStk && mbSelStk.target === target && mbSelStk.idx === i;
     var inner = MB_STKART[st.k]
       ? '<img src="' + MB_STKART[st.k] + '" alt="" style="width:' + sz + 'px">'
       : '<span class="mem" style="font-size:' + Math.round(sz * 0.92) + 'px">' + (MB_EMO[st.k] || '⭐') + '</span>';
-    return '<div class="m-placed" data-mstk="' + target + ':' + i + '" style="left:' + st.x + '%;top:' + st.y + '%;width:' + sz + 'px">' +
-      inner + '<button type="button" class="mdel" data-mdel="' + target + ':' + i + '" aria-label="스티커 떼기">✕</button></div>';
+    return '<div class="m-placed' + (sel ? ' sel' : '') + '" data-mstk="' + target + ':' + i + '" style="left:' + st.x + '%;top:' + st.y + '%;width:' + sz + 'px">' +
+      inner + '<button type="button" class="mdel" data-mdel="' + target + ':' + i + '" aria-label="스티커 지우기">✕</button></div>';
   }
   function mbPaintStickers() {
     var layers = { paper: $('#mbPaperStk'), env: $('#mbEnvStk') };
@@ -14773,7 +15051,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       ['✉️', '봉투', en + ' 봉투'],
       ['🌈', '스티커', (C.stickers.length + C.envStickers.length) + '개']
     ];
-    if (C.gift) rows.push(['🎁', '깜짝 선물', C.gift.name + (C.gift.shiny ? ' ✨' : '')]);
+    if (C.gift) rows.push(['🎁', '깜짝 선물', mbMonName(C.gift.id, C.gift.name) + (C.gift.shiny ? ' ✨' : '')]);
     box.innerHTML = rows.map(function (r) {
       return '<div class="m-sum-row"><span>' + r[0] + '</span>' + r[1] + '<b>' + esc(r[2]) + '</b></div>';
     }).join('');
@@ -14794,7 +15072,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       var ids = mbGiftIds(MB.giftQ);
       grid.innerHTML = ids.slice(0, 40).map(function (pid) {
         var on = MB.compose.gift && MB.compose.gift.id === pid;
-        return '<button type="button" class="m-gift-cell' + (on ? ' on' : '') + '" data-mgiftpick="' + pid + '" aria-label="' + esc(monName(pid)) + ' 선물로 붙이기">' +
+        return '<button type="button" class="m-gift-cell' + (on ? ' on' : '') + '" data-mgiftpick="' + pid + '" aria-label="' + esc(mbMonName(pid, '')) + ' 선물로 붙이기">' +
           '<img src="' + artUrl(pid) + '" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">' +
           '<span class="no">' + (isMega(pid) ? 'M' : ('#' + pid)) + '</span></button>';
       }).join('') || '<div class="m-empty" style="grid-column:1/-1;padding:8px">찾는 포켓몬이 없어요</div>';
@@ -14803,9 +15081,10 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (pick) {
       if (MB.compose.gift) {
         var g = MB.compose.gift;
+        var gname = mbMonName(g.id, g.name);
         pick.innerHTML = '<div class="m-gift-pick">' +
           '<img src="' + artUrl(g.id) + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
-          '<div class="gp-copy">' + esc(g.name) + ' 선물<small>봉투 속에 쏙 들어갔어요</small></div>' +
+          '<div class="gp-copy">' + esc(gname) + ' 선물<small>봉투 속에 쏙 들어갔어요</small></div>' +
           '<button type="button" class="m-shiny-toggle' + (g.shiny ? ' on' : '') + '" id="mbGiftShiny" aria-pressed="' + (g.shiny ? 'true' : 'false') + '">✨ 이로치</button>' +
           '<button type="button" class="gp-del" id="mbGiftDel" aria-label="선물 빼기">✕</button>' +
         '</div>';
@@ -14813,6 +15092,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
         pick.innerHTML = '<div class="m-help">포켓몬을 고르면 봉투 속에 깜짝 선물로 들어가요 · 마스터는 차감 없이 보내요</div>';
       }
     }
+    mbKoScan();
   }
   function mbGiftIds(q) {
     q = searchNorm(q || '');
@@ -14941,10 +15221,39 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     img.src = url;
   }
   function mbClearInk() {
-    if (!mbCtx) return;
-    mbPushUndo();
-    mbCtx.clearRect(0, 0, mbCanvasEl.width, mbCanvasEl.height);
+    /* 싹 지우기 = 손그림 + 편지지·봉투에 붙인 스티커까지 한 번에 */
+    var hadStk = (MB.compose.stickers.length || 0) + (MB.compose.envStickers.length || 0);
+    if (mbCtx) {
+      mbPushUndo();
+      mbCtx.clearRect(0, 0, mbCanvasEl.width, mbCanvasEl.height);
+    }
     mbHasInk = false;
+    MB.compose.stickers = [];
+    MB.compose.envStickers = [];
+    mbSelStk = null;
+    mbPaintStickers(); mbPaintPalette(); mbPaintSum();
+    toast(hadStk ? '🧹 그림과 스티커를 싹 지웠어요' : '🧹 그림을 싹 지웠어요');
+  }
+  /* 🗑️ 스티커 지우기 — 고른 스티커가 있으면 그것만, 없으면 모두 */
+  function mbStkClear() {
+    var C = MB.compose;
+    var nAll = C.stickers.length + C.envStickers.length;
+    if (!nAll) { toast('지울 스티커가 없어요'); return; }
+    if (mbSelStk) {
+      var arr = mbSelStk.target === 'env' ? C.envStickers : C.stickers;
+      if (arr && arr[mbSelStk.idx]) {
+        arr.splice(mbSelStk.idx, 1);
+        mbSelStk = null;
+        mbPaintStickers(); mbPaintPalette(); mbPaintSum();
+        toast('🗑️ 고른 스티커를 지웠어요');
+        return;
+      }
+    }
+    C.stickers = [];
+    C.envStickers = [];
+    mbSelStk = null;
+    mbPaintStickers(); mbPaintPalette(); mbPaintSum();
+    toast('🗑️ 스티커를 모두 지웠어요');
   }
   function mbExport() {
     if (!mbHasInk || !mbCanvasEl) return '';
@@ -15010,7 +15319,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   function mbMakeTitle(text, gift) {
     var t = String(text || '').split('\n')[0].trim();
     if (t) return t.length > 26 ? t.slice(0, 26) + '…' : t;
-    if (gift) return '🎁 ' + gift.name + ' 선물 편지';
+    if (gift) return '🎁 ' + mbMonName(gift.id, gift.name) + ' 선물 편지';
     return '손그림 편지';
   }
   function mbResetCompose() {
@@ -15018,6 +15327,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     MB.compose.to = mbOthers()[0];
     mbHasInk = false;
     mbUndoStack = [];
+    mbSelStk = null;
     if (mbCtx) mbCtx.clearRect(0, 0, mbCanvasEl.width, mbCanvasEl.height);
     var t = $('#mbText');
     if (t) t.value = '';
@@ -15025,6 +15335,31 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     mbPaintCompose();
   }
   function mbSendLetter() {
+    var C = MB.compose;
+    var to = C.to || mbOthers()[0];
+    if (!MB_PEOPLE[to] || to === KID) { toast('받는 사람을 골라 주세요'); return; }
+    if (MB.sending) return;
+    if (MASTER && C.gift && mbNoName(mbMonName(C.gift.id, C.gift.name))) {
+      /* 이름이 번호(No.OOO)인 선물은 한글 이름을 먼저 받아 와서 보낸다 */
+      MB.sending = true;
+      var b0 = $('#mbSend');
+      if (b0) b0.disabled = true;
+      mbEnsureKo([C.gift.id], null).then(function () {
+        if (C.gift) C.gift.name = mbMonName(C.gift.id, C.gift.name);
+        MB.sending = false;
+        if (b0) b0.disabled = false;
+        mbPaintGift(); mbPaintSum();
+        mbPostLetter();
+      }, function () {
+        MB.sending = false;
+        if (b0) b0.disabled = false;
+        mbPostLetter();
+      });
+      return;
+    }
+    mbPostLetter();
+  }
+  function mbPostLetter() {
     var C = MB.compose;
     var to = C.to || mbOthers()[0];
     if (!MB_PEOPLE[to] || to === KID) { toast('받는 사람을 골라 주세요'); return; }
@@ -15038,16 +15373,17 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     MB.sending = true;
     var btn = $('#mbSend');
     if (btn) btn.disabled = true;
+    var gname = (MASTER && C.gift) ? mbMonName(C.gift.id, C.gift.name) : '';
     var L = {
       from: KID, to: to,
-      title: mbMakeTitle(text, C.gift),
+      title: mbMakeTitle(text, (MASTER && C.gift) ? { id: C.gift.id, name: gname } : null),
       text: text,
       paper: C.paper, env: C.env,
       stickers: C.stickers, envStickers: C.envStickers,
       createdAt: Date.now(), read: false
     };
     if (draw) L.draw = draw;
-    if (MASTER && C.gift) L.gift = { id: C.gift.id, name: C.gift.name, shiny: !!C.gift.shiny, claimed: false };
+    if (MASTER && C.gift) L.gift = { id: C.gift.id, name: gname, shiny: !!C.gift.shiny, claimed: false };
     mbPost('/letters.json', L).then(function (res) {
       if (res && res.name) {
         var L2 = mbNorm(res.name, L);
@@ -15134,6 +15470,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
           : [[76, 66], [64, 82], [86, 42], [54, 72], [70, 88], [88, 60]];
         var spot = spots[list.length % spots.length];
         list.push({ k: k, x: spot[0], y: spot[1], s: 1, r: 0 });
+        /* 방금 붙인 스티커를 골라 둔다 → 큰 ✕ 삭제 배지가 바로 보인다 */
+        mbSelStk = { target: envT ? 'env' : 'paper', idx: list.length - 1 };
         mbPaintStickers(); mbPaintPalette(); mbPaintSum();
         return;
       }
@@ -15142,6 +15480,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
         var parts = md.getAttribute('data-mdel').split(':');
         var arr = parts[0] === 'env' ? MB.compose.envStickers : MB.compose.stickers;
         arr.splice(parseInt(parts[1], 10), 1);
+        mbSelStk = null;
         mbPaintStickers(); mbPaintPalette(); mbPaintSum();
         return;
       }
@@ -15161,14 +15500,23 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       if (t.closest('#mbEraser')) { mbPen.eraser = !mbPen.eraser; mbPaintCompose(); return; }
       if (t.closest('#mbUndo')) { mbUndo(); return; }
       if (t.closest('#mbClear')) { mbClearInk(); return; }
+      if (t.closest('#mbStkClear')) { mbStkClear(); return; }
       if (t.closest('#mbSend')) { mbSendLetter(); return; }
       if (t.closest('#mbDraft')) { mbDraftSave(false); return; }
       var gp = t.closest('[data-mgiftpick]');
       if (gp) {
         var pid = parseInt(gp.getAttribute('data-mgiftpick'), 10) || 0;
         if (pid) {
-          MB.compose.gift = { id: pid, name: monName(pid), shiny: MB.compose.gift && MB.compose.gift.id === pid ? !!MB.compose.gift.shiny : MB.giftShiny };
+          MB.compose.gift = { id: pid, name: mbMonName(pid, ''), shiny: MB.compose.gift && MB.compose.gift.id === pid ? !!MB.compose.gift.shiny : MB.giftShiny };
           mbPaintGift(); mbPaintSum();
+          /* 고른 선물 확인이 화면 밖으로 밀리지 않게 보여 준다 */
+          try { var pk = $('#mbGiftPick'); if (pk && pk.scrollIntoView) pk.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+          if (mbNoName(MB.compose.gift.name)) {
+            mbEnsureKo([pid], function () {
+              if (MB.compose.gift && MB.compose.gift.id === pid) MB.compose.gift.name = mbMonName(pid, '');
+              mbPaintGift(); mbPaintSum();
+            });
+          }
         }
         return;
       }
@@ -15215,6 +15563,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     var layer = $('#mailLayer');
     if (layer) {
       layer.addEventListener('pointerdown', function (e) {
+        /* ✕ 삭제 배지를 누를 때는 끌기를 시작하지 않는다 (손가락 삭제가 잘 눌리게) */
+        if (e.target.closest && e.target.closest('.mdel')) return;
         var el = e.target.closest ? e.target.closest('.m-placed') : null;
         if (!el) return;
         var parts = el.getAttribute('data-mstk').split(':');
@@ -15259,17 +15609,26 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       mbFt = setTimeout(function () { if (MB.open && MB.tab === 'write') mbPaintCompose(); }, 160);
     });
   }
-  var mbSelPlaced = null;
+  var mbSelStk = null;
   function mbSelectPlaced(el) {
-    if (mbSelPlaced) mbSelPlaced.classList.remove('sel');
+    if (!el) return;
+    var p = String(el.getAttribute('data-mstk') || '').split(':');
+    var target = p[0] === 'env' ? 'env' : 'paper';
+    var idx = parseInt(p[1], 10);
+    var arr = target === 'env' ? MB.compose.envStickers : MB.compose.stickers;
+    if (!(idx >= 0) || !arr[idx]) return;
+    mbSelStk = { target: target, idx: idx };
+    $$('.m-placed.sel').forEach(function (x) { x.classList.remove('sel'); });
     el.classList.add('sel');
-    mbSelPlaced = el;
+    mbPaintPalette();
   }
 
   function mbInit() {
     mbWire();
     mbPaintBadge();
     mbRefresh(false);
+    /* 앱을 열 때마다 이미 받은 선물 포켓몬 이름도 한글로 맞춰 둔다 */
+    mbKoScan(600);
   }
 
   /* ---------- 검증용 훅 ---------- */
