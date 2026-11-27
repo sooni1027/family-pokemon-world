@@ -10184,7 +10184,9 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     if (!caught.length) {
       html = '<div class="v-empty">아직 잡은 포켓몬이 없어요 · 퀘스트를 마치고 포켓몬을 잡아 보세요!</div>';
     } else if (MASTER && !shown.length) {
-      html = '<div class="v-empty">🔍 찾는 포켓몬이 없어요 · 이름이나 번호로 검색해 보세요</div>';
+      html = trayFilter === 'shiny'
+        ? '<div class="v-empty">✨ 이로치로 받은 포켓몬이 아직 없어요 · 교환에서 아이들에게 이로치를 보내 줄 수 있어요</div>'
+        : '<div class="v-empty">🔍 찾는 포켓몬이 없어요 · 이름이나 번호로 검색해 보세요</div>';
     } else if (rest > 0) {
       html += '<button type="button" class="v-slot more" data-traymore="1" aria-label="' + rest + '마리 더 보기">' +
         '<span class="snm">+' + rest + '마리<br>더 보기</span></button>';
