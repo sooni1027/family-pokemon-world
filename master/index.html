@@ -3544,6 +3544,11 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 }
 .v-mail-badge[hidden]{display:none}
 .v-mail-badge.gift{background:linear-gradient(135deg,#ffc947,#f2a01c);box-shadow:0 4px 10px rgba(200,140,20,.42)}
+.v-mail-badge::before{
+  content:'';position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:#f2426b;border-bottom:0;
+}
+.v-mail-badge.gift::before{border-top-color:#f2a01c}
 .v-mail-badge::after{
   content:'';position:absolute;inset:0;border-radius:999px;
   box-shadow:0 0 0 0 rgba(255,130,160,.55);animation:vMailRing 1.6s ease-out infinite;
@@ -3816,7 +3821,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 .mr-text{
   position:relative;z-index:2;
   font-family:'GaeguMail','Pretendard',sans-serif;
-  font-size:clamp(15px,1.95vw,24px);line-height:1.42;color:#3c4460;letter-spacing:-.2px;
+  font-size:clamp(15px,2.05vw,25px);line-height:1.42;color:#3c4460;letter-spacing:-.2px;
   white-space:pre-wrap;word-break:break-word;
   max-height:100%;overflow:hidden;
 }
@@ -4022,7 +4027,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   position:absolute;inset:0;z-index:1;width:100%;height:100%;resize:none;
   padding:7% 7.5%;border:0;background:transparent;outline:none;
   font-family:'GaeguMail','Pretendard',sans-serif;
-  font-size:clamp(15px,1.9vw,23px);line-height:1.45;color:#3c4460;letter-spacing:-.2px;
+  font-size:clamp(16px,2vw,24px);line-height:1.45;color:#3c4460;letter-spacing:-.2px;
   touch-action:auto;overflow:auto;
 }
 .m-paper-wrap.draw .m-text{pointer-events:none}
