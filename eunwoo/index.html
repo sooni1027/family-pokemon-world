@@ -1460,6 +1460,23 @@ body{font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Nanum Gothic
   border:2px solid rgba(255,255,255,.95);box-shadow:0 2px 0 rgba(120,170,205,.28);
 }
 
+/* ---------- 🔋 배터리 잔량 (헤더) ---------- */
+.batt{
+  height:40px;display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;
+  padding:0 12px;border-radius:13px;
+  background:rgba(255,255,255,.94);border:2px solid rgba(255,255,255,.95);
+  box-shadow:0 2px 0 rgba(120,170,205,.28);
+  font-size:13.5px;font-weight:900;color:#4f7a99;letter-spacing:-.2px;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.batt[hidden]{display:none}
+.batt .batt-ico{font-size:15px;line-height:1}
+.batt.charging{color:#0b8a5f;background:linear-gradient(180deg,#f3fff9,#e4f9ef);border-color:#bdebd7}
+.batt.low{color:#d33f3f;background:linear-gradient(180deg,#fff4f4,#ffe7e7);border-color:#ffc9c9}
+.batt.low .batt-ico{animation:battLow 1.6s ease-in-out infinite}
+@keyframes battLow{0%,100%{transform:none}50%{transform:scale(1.14)}}
+@media (prefers-reduced-motion:reduce){.batt.low .batt-ico{animation:none}}
+
 /* ---------- 탭 패널 ---------- */
 main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:relative}
 .panel{display:none;height:100%;min-height:0;animation:panelIn .18s ease}
@@ -2144,6 +2161,9 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 @media (max-width:560px){
   .topbar{height:auto;flex-wrap:wrap;gap:6px}
   .tabs{order:3;flex:1 0 100%;overflow-x:auto}
+  /* 🔋 폰 폭에서도 헤더가 한 줄에 들어오게 배지를 작게 */
+  .batt{height:34px;padding:0 9px;font-size:12px;border-radius:11px;gap:3px}
+  .batt .batt-ico{font-size:13px}
   main{padding:2px 8px 8px}
   .hours{grid-template-columns:repeat(2,minmax(0,1fr))}
   .qcards{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
@@ -4329,6 +4349,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     <button class="tab" data-tab="game" aria-pressed="false"><span class="ico">🎮</span>게임</button>
   </nav>
   <div class="topbar-right">
+    <span class="batt" id="batteryBadge" hidden title="배터리"><span class="batt-ico" id="battIco" aria-hidden="true">🔋</span><span class="batt-lv" id="battLv">--%</span></span>
     <button class="fs-btn" id="fsBtn" aria-label="전체화면으로 보기" aria-pressed="false" title="전체화면으로 보기"><span class="fs-ico">⛶</span><span class="fs-label">전체화면</span></button>
     <button class="gear" id="gearBtn" aria-label="엄마 선물 전용함 열기" title="엄마 선물 전용함">⚙️</button>
   </div>
@@ -13138,8 +13159,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       byKid: { seungwoo: { stage: [55, 3.6, 46, 0.62, 0], room: [58, 0.8, 43, 0.88, 10] },
                master: { stage: [45, 0.8, 43, 0.62, 0], room: [45, 0.8, 43, 0.62, 0] } } },
     { id: 'crown', name: '황금 왕관', slot: 'head', price: 4,
-      stage: [56.5, -2.4, 34, 1, 0], room: [57, 0, 42, 1, 0],
-      byKid: { seungwoo: { stage: [55, 1.6, 34, 1, 0], room: [57, 1, 40, 1, 3] },
+      stage: [56.5, -4, 34, 1, 0], room: [57, 0, 42, 1, 0],
+      byKid: { seungwoo: { stage: [55, -4, 34, 1, 0], room: [57, 1, 40, 1, 3] },
                master: { stage: [45, -0.4, 33, 1, 0], room: [45, -0.4, 33, 1, 0] } } },
     { id: 'ribbon', name: '핑크 리본', slot: 'head', price: 3,
       stage: [63, 2, 21, 1, 14], room: [66, 7, 26, 1, 16],
@@ -15952,6 +15973,66 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 
 
   /* ============================================================
+     🔋 배터리 잔량 (Battery Status API) — 상단 헤더에 실시간 표시
+     · 태블릿을 앱으로 고정해 쓰면 상태 표시줄이 가려져서,
+       대시보드 안에서 배터리가 얼마나 남았는지 바로 보이게 한다
+     · 충전 중이면 ⚡(초록), 20% 이하이면 빨간 경고, 그 밖에는 🔋
+     · 지원하지 않는 브라우저(아이폰 사파리 등)에서는 배지를 숨긴다
+     ============================================================ */
+  var BATT_LOW = 20;
+  var battRef = null;
+
+  function batteryPct(bat) {
+    var lv = Math.round((parseFloat(bat && bat.level) || 0) * 100);
+    if (!isFinite(lv)) lv = 0;
+    return clamp(lv, 0, 100);
+  }
+
+  function paintBattery() {
+    var badge = $('#batteryBadge');
+    if (!badge || !battRef) return;
+    var lv = batteryPct(battRef);
+    var charging = !!battRef.charging;
+    var low = lv <= BATT_LOW;
+    var ico = $('#battIco'), num = $('#battLv');
+    if (ico) ico.textContent = charging ? '⚡' : '🔋';
+    if (num) num.textContent = lv + '%';
+    badge.classList.toggle('charging', charging);
+    badge.classList.toggle('low', low);
+    badge.setAttribute('data-level', lv);
+    badge.setAttribute('data-charging', charging ? '1' : '0');
+    badge.setAttribute('aria-label', '배터리 ' + lv + '%' + (charging ? ' · 충전 중' : (low ? ' · 충전이 필요해요' : '')));
+    badge.title = '배터리 ' + lv + '%' + (charging ? ' · 충전 중' : (low ? ' · 충전이 필요해요' : ''));
+    badge.hidden = false;
+  }
+
+  function initBattery() {
+    var badge = $('#batteryBadge');
+    if (!badge) return;
+    /* 지원하지 않으면 그대로 숨김 (display:none) */
+    if (typeof navigator.getBattery !== 'function') { badge.hidden = true; return; }
+    var p;
+    try { p = navigator.getBattery(); } catch (e) { badge.hidden = true; return; }
+    if (!p || typeof p.then !== 'function') { badge.hidden = true; return; }
+    p.then(function (bat) {
+      battRef = bat;
+      paintBattery();
+      /* 충전기를 꽂거나 빼도, 배터리가 줄어도 바로바로 갱신 */
+      ['levelchange', 'chargingchange', 'chargingtimechange', 'dischargingtimechange']
+        .forEach(function (ev) {
+          if (typeof bat.addEventListener === 'function') {
+            bat.addEventListener(ev, function () { paintBattery(); });
+          }
+        });
+    }).catch(function () { badge.hidden = true; });
+    /* 앱을 다시 열었을 때(백그라운드에서 돌아왔을 때) 한 번 더 맞춘다 */
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && battRef) paintBattery();
+    });
+  }
+
+
+  /* ============================================================
      이벤트 연결 · 시작
      ============================================================ */
   function paintKids() { KIDLIST.forEach(function (id) { paintKid(id); }); }
@@ -15964,6 +16045,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       document.addEventListener(ev, paintFsBtn);
     });
     paintFsBtn();
+    initBattery();
     wireBackup();
 
     /* ⚙️ 엄마 선물 전용함 */
