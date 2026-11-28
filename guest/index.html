@@ -16081,6 +16081,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   function guestRepaint() {
     var nm = guestName();
     KIDS[KID].name = nm;
+    if (typeof MB_PEOPLE !== 'undefined' && MB_PEOPLE.guest) MB_PEOPLE.guest.name = nm;
     guestApplyName(nm);
     if (KID_ITEM) KID_ITEM.name = nm;
     var col = document.getElementById('col-' + KID);
@@ -16145,6 +16146,10 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
 
   function guestInit() {
     KIDS[KID].name = guestName();
+    /* 💌 우편함에서도 게스트를 사람으로 알아보게 (이름은 설정값을 따른다) */
+    if (typeof MB_PEOPLE !== 'undefined') {
+      MB_PEOPLE.guest = { name: guestName(), emoji: '🧒', role: '게스트' };
+    }
     guestApplyName(guestName());
     wireGuest();
   }
