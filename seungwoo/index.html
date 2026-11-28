@@ -8127,7 +8127,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     return x;
   }
   function weekOf() {
-    var s = sundayOf(new Date());
+    var s = sundayOf(nowDate());
     var days = [];
     for (var i = 0; i < 7; i++) {
       var d = new Date(s.getTime());
@@ -11067,6 +11067,8 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
     det.hidden = false;
     var gift = (t.from === 'master') && !MASTER;
     var cards = tradesLeft();
+    /* 이미 내 도감에 있는 포켓몬이면 받아도 손해 — 실수로 날리지 않게 막아 둔다 */
+    var dup = !MASTER && ownsPid(t.pid) && !(t.shiny && !ownShiny(t.pid));
     var mineList = state[KID].caught.slice().sort(function (a, b) { return a.id - b.id; });
     var shown = mineList, rest = 0;
     if (MASTER) {
@@ -11086,6 +11088,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
             : (MASTER ? '받으면 내 도감에서 고른 포켓몬을 답례로 보내요 · 엄마는 잃지 않아요'
                       : '받으려면 내 포켓몬 1마리를 골라 주세요 · 🎟️ 교환카드 1장')) + '</span></div>' +
       '</div>' +
+      (dup ? '<div class="trade-alert">이미 내 도감에 있는 ' + esc(monName(t.pid)) + '예요 · 그냥 받으면 내 포켓몬만 사라져요. 거절해 주세요.</div>' : '') +
       (!MASTER && !gift && cards <= 0 ? '<div class="trade-alert">🎟️ 교환카드가 없어요! 엄마 선물함(⚙️)에서 받아 주세요.</div>' : '') +
       (MASTER
         ? '<div class="trade-tools"><div class="search-wrap">' +
@@ -11106,9 +11109,9 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
       '</div>' +
       '<div class="tr-acts">' +
         '<button class="btn ' + (gift ? 'soft' : 'primary') + ' trade-go" id="tradeAcceptBtn" type="button"' +
-          ((trInSel && (MASTER || gift || cards > 0)) ? '' : ' disabled') + '>' +
+          ((trInSel && !dup && (MASTER || gift || cards > 0)) ? '' : ' disabled') + '>' +
           (MASTER ? '🔄 이 포켓몬 주고 받기' : '🔄 교환하기') + '</button>' +
-        ((gift || MASTER) ? '<button class="btn ' + (gift ? 'primary' : 'soft') + ' trade-go" id="tradeGiftBtn" type="button">🎁 ' + (MASTER ? '답례 없이 받기' : '그냥 받기') + '</button>' : '') +
+        ((gift || MASTER) ? '<button class="btn ' + (gift ? 'primary' : 'soft') + ' trade-go" id="tradeGiftBtn" type="button"' + (dup ? ' disabled' : '') + '>🎁 ' + (MASTER ? '답례 없이 받기' : '그냥 받기') + '</button>' : '') +
         '<button class="btn soft trade-go" id="tradeRejectBtn" type="button">거절하기</button>' +
       '</div>';
     var inp = $('#tradeReplySearch');
@@ -11126,6 +11129,7 @@ main{flex:1 1 auto;min-height:0;display:block;padding:2px 12px 12px;position:rel
   function trAccept(gift) {
     var t = tr.items[trInId];
     if (!t || t.to !== KID || t.status !== 'pending') return;
+    if (!MASTER && ownsPid(t.pid)) { toast('이미 내 도감에 있는 포켓몬이에요 · 거절해 주세요'); return; }
     var givePid = gift ? 0 : trInSel;
     if (!givePid && !gift) { toast('내가 줄 포켓몬을 골라 주세요'); return; }
     if (givePid && !MASTER && tradesLeft() <= 0) { toast('🎟️ 교환카드가 필요해요'); return; }
